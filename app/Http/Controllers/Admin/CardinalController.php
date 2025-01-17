@@ -26,7 +26,7 @@ class CardinalController extends Controller
     public function index(Request $request)
     {
         $data = QueryBuilder::for(Cardinal::class)
-            ->where("name_ko", $request->name_ko) //program
+            ->where("board_id", $request->board_id) //program
             ->allowedFilters([
                 AllowedFilter::callback('search', function ($query, $value) { //전체 검색
                     $query->where(function ($query) use ($value) {
