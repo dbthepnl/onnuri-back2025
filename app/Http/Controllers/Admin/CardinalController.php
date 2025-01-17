@@ -38,6 +38,7 @@ class CardinalController extends Controller
         $data = 
         $data->leftJoin('boards', 'boards.id', '=', 'cardinals.board_id')
             ->select('cardinals.*', 'boards.name_ko')
+            ->orderBy('cardinals.cardinal_number', 'desc')
             ->paginate(15);
         
         return new CardinalCollection($data);
