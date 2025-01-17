@@ -35,7 +35,6 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::post('donations/profile/{id}', [DonationController::class, 'profile']);
     Route::apiResource('categories', CategoryController::class);
     Route::post('users/profile/{id}', [UserController::class, 'profile']);
-    Route::post('notices/{id}', [NoticeController::class, 'updatePost']);
     Route::post('notices/profile/{id}', [NoticeController::class, 'profile']);
     Route::post('notices/files/{id}', [NoticeController::class, 'fileUpdate']);
     Route::post('store/image', [NoticeController::class, 'storeImage']);

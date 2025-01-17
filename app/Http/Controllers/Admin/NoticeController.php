@@ -27,7 +27,7 @@ class NoticeController extends Controller
     public function index(Request $request)
     {
         $users = QueryBuilder::for(Post::class)
-        ->where("board", $request->board) //event, message, news, assembly
+        ->where("board", $request->board) //훈련관리:train / 공지관리:notice
         ->when($request->has('category'), function ($query) use ($request) {
             $query->where("category", $request->category); // 기본값 1: 공지사항
         })
@@ -39,155 +39,28 @@ class NoticeController extends Controller
                 });
             }),
         ])
-        ->whereNotIn('category', [22, 23, 24])
         ->allowedSorts(['id', 'title'])
         ->orderBy('order', 'desc')
         ->orderBy('updated_at', 'desc')
         ->paginate(15);
 
-        
         return new NoticeCollection($users);
     
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function indexPopups(Request $request)
-    {
-        $users = QueryBuilder::for(Post::class)
-        ->where("board", $request->board) //event, message, news, assembly
-        ->where('category', 24)
-        ->allowedFilters([
-            "title", //제목 검색
-            AllowedFilter::callback('search', function ($query, $value) { //전체 검색
-                $query->where(function ($query) use ($value) {
-                    $query->where('title', 'like', "%$value%");
-                });
-            }),
-        ])
-        ->allowedSorts(['id', 'title'])
-        ->orderBy('updated_at', 'desc')
-        ->paginate(15);
-
-        return new NoticeCollection($users);
-    
-    }
-
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function indexShorts(Request $request)
-    {
-        $users = QueryBuilder::for(Post::class)
-        ->where("board", $request->board) //event, message, news, assembly
-        ->where('category', 22)
-        ->allowedFilters([
-            "title", //제목 검색
-            AllowedFilter::callback('search', function ($query, $value) { //전체 검색
-                $query->where(function ($query) use ($value) {
-                    $query->where('title', 'like', "%$value%");
-                });
-            }),
-        ])
-        ->allowedSorts(['id', 'title'])
-        ->orderBy('updated_at', 'desc')
-        ->paginate(15);
-
-        return new NoticeCollection($users);
-
-    }
-
-     /**
-     * Display a listing of the resource.
-     */
-    public function indexVideos(Request $request)
-    {
-
-        $users = QueryBuilder::for(Post::class)
-        ->where("board", $request->board) //event, message, news, assembly
-        ->where('category', 23)
-        ->allowedFilters([
-            "title", //제목 검색
-            AllowedFilter::callback('search', function ($query, $value) { //전체 검색
-                $query->where(function ($query) use ($value) {
-                    $query->where('title', 'like', "%$value%");
-                });
-            }),
-        ])
-        ->allowedSorts(['id', 'title'])
-        ->orderBy('updated_at', 'desc')
-        ->paginate(15);
- 
-        return new NoticeCollection($users);
-    
-    }
-
-
-    /**
-     * Display a listing of the resource.
-     */
-    public function indexGongzimes(Request $request)
-    {
-
-        $users = QueryBuilder::for(Post::class)
-        ->selectRaw('id, public, board, category, category_id, title, content, created_at, updated_at')
-        ->where("board", $request->board) //event, message, news, assembly
-        ->when($request->has('category'), function ($query) use ($request) {
-            $query->where("category", $request->category); // 1, 2, 3, 25
-        })
-        ->allowedFilters([
-            "title", //제목 검색
-            AllowedFilter::callback('search', function ($query, $value) { //전체 검색
-                $query->where(function ($query) use ($value) {
-                    $query->where('title', 'like', "%$value%");
-                });
-            }),
-        ])
-        ->allowedSorts(['id', 'title'])
-        ->orderBy('updated_at', 'desc')
-        ->paginate(15);
-
-        $users->getCollection()->transform(function ($post) {
-
-            if ($post->hasMedia('files')) {
-                $post->files = $post->getMedia('files')->map(function ($media) {
-                    return [
-                        'id' => $media->id,
-                        'url' => $media->getUrl(),
-                        'name' => $media->file_name,
-                        'size' => $media->size,
-                    ];
-                });
-            }
-    
-            return $post->makeHidden(['media']);
-        });
-
-        return new GongzimeCollection($users);
-    
-    }
+    }    
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
+
         $data = $request->validate([
-            'title' => 'required|string',
             'public' => 'required|boolean',
-            'order' => 'nullable',
-            'update_on' => 'nullable',
             'board' => 'required|string',
-            'bus_content' => 'nullable|string',
-            'safe_content' => 'nullable|string',
-            'category_id' => 'nullable',
+            'order' => 'required|boolean',
+            'category' => 'nullable',
+            'title' => 'required|string',
             'content' => 'nullable|string', 
-            'urls' => 'nullable|string', 
-            'start_at' => 'nullable|string',
-            'end_at' => 'nullable|string',
-            'time_at' => 'nullable|string',
         ]);
 
         $data['created_at'] = Carbon::now();
@@ -204,7 +77,7 @@ class NoticeController extends Controller
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
                 $post->addMedia($file)
-                     ->toMediaCollection('files', 's3'); // Store in 'files' collection on S3
+                     ->toMediaCollection('files', 's3');
             }
         }
     
@@ -228,20 +101,6 @@ class NoticeController extends Controller
                 'message' => '데이터 검증 실패',
             ]);
         }
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        $post = Post::findOrFail($id);
-        $post->update($request->all());
-    
-        return response()->json([
-            'success' => true,
-            'message' => '업데이트 완료'
-        ], 200);
     }
 
     public function updatePost(Request $request, string $id)
