@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('board_id')->nullable();
             $table->string('name_ko');
-            $table->string('color_code')->nullable();
+            $table->string('name_en');
+            $table->unsignedBigInteger('cardinals')->default(0);
             $table->timestamps();
         });
     }

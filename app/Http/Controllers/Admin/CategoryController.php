@@ -25,16 +25,13 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
-        $users = QueryBuilder::for(Category::class)
-        ->where("name_en", $request->name_en) //event, message, news, assembly
-        ->allowedFilters([
-            "name_ko", //제목 검색
-        ])
-        ->allowedSorts(['id', 'name_ko']);
-        $users = $users->paginate(15);
+        $data = QueryBuilder::for(Category::class)
+        ->where('boards.name_ko', $request->name_ko)
+        ->get();
+   
         
 
-        return new CategoryCollection($users);
+        return new CategoryCollection($data);
     }
 
     /**

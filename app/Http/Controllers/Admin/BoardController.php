@@ -6,6 +6,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Models\Board;
+use App\Models\Category;
 use App\Http\Resources\BoardCollection;
 use App\Http\Resources\BoardResource;
 use App\Http\Controllers\Controller;
@@ -59,6 +60,18 @@ class BoardController extends Controller
 
         return response()->json([
             'success' => true,
+            'message' => '등록 완료'
+        ], 200);
+    }
+
+    public function categories(Request $request) {
+        $data = QueryBuilder::for(Category::class)
+        ->where('boards.name_ko', $request->name_ko)
+        ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
             'message' => '등록 완료'
         ], 200);
     }
