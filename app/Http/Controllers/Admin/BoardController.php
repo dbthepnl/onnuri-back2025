@@ -36,10 +36,10 @@ class BoardController extends Controller
             }),
         ])
         ->allowedSorts(['id', 'name_ko']);
-        $data = $data->paginate(15);
+        $data = $data->get();
         
 
-        return new BoardCollection($data);
+        return new BoardResource($data);
     }
 
     /**

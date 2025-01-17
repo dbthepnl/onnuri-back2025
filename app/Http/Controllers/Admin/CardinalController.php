@@ -25,27 +25,22 @@ class CardinalController extends Controller
      */
     public function index(Request $request)
     {
-        $users = QueryBuilder::for(Post::class)
-        ->where("board", $request->board) //event, message, news, assembly
-        ->when($request->has('category'), function ($query) use ($request) {
-            $query->where("category", $request->category); // 기본값 1: 공지사항
-        })
-        ->allowedFilters([
-            "title", //제목 검색
-            AllowedFilter::callback('search', function ($query, $value) { //전체 검색
-                $query->where(function ($query) use ($value) {
-                    $query->where('title', 'like', "%$value%");
-                });
-            }),
-        ])
-        ->whereNotIn('category', [22, 23, 24])
-        ->allowedSorts(['id', 'title'])
-        ->orderBy('order', 'desc')
-        ->orderBy('updated_at', 'desc')
-        ->paginate(15);
-
+            $data = QueryBuilder::for(Cardinal::class)
+            ->allowedFilters([
+                AllowedFilter::callback('search', function ($query, $value) { //전체 검색
+                    $query->where(function ($query) use ($value) {
+                        $query->where('title', 'like', "%$value%");
+                    });
+                }),
+            ])
+            ->allowedSorts(['id', 'name_ko']);
+            
+        $data = 
+        $data->leftJoin('boards', 'boards.id', '=', 'categories.board_id')
+            ->select('categories.*', 'boards.name as board_name')
+            ->paginate(15);
         
-        return new NoticeCollection($users);
+        return new CardinalCollection($users);
     }
 
     /**

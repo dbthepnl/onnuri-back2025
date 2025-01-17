@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BoardController;
 use App\Http\Controllers\Admin\CalendarController;
 use App\Http\Controllers\Admin\BusController;
+use App\Http\Controllers\Admin\CardinalController;
 use App\Http\Controllers\Admin\DonationController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::get('gongzimes', [NoticeController::class, 'indexGongzimes']);
     Route::apiResource('boards', BoardController::class);
     Route::apiResource('posts', PostController::class);
+    Route::apiResource('cardinals', CardinalController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('notices', NoticeController::class);
     Route::apiResource('participants', ParticipantController::class);
