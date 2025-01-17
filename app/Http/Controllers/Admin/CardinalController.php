@@ -93,7 +93,6 @@ class CardinalController extends Controller
     public function update(Request $request, string $id)
     {
 
-        return $request->all();
         $data = Cardinal::findOrFail($id);
         $request->updated_at = Carbon::now();
         $request->created_at = Carbon::now();
