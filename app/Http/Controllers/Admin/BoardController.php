@@ -48,6 +48,7 @@ class BoardController extends Controller
     {
         $data = $request->validate([
             'name_ko' => 'required|string', //프로그램명
+            'name_en' => 'nullable'
             'information' => 'nullable'
 
         ]);
