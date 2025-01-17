@@ -29,8 +29,6 @@ class CategoryController extends Controller
         ->where('boards.name_ko', $request->name_ko)
         ->get();
    
-        
-
         return new CategoryCollection($data);
     }
 
