@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\NoticeController;
 use App\Http\Controllers\Admin\ParticipantController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\BoardController;
 use App\Http\Controllers\Admin\CalendarController;
 use App\Http\Controllers\Admin\BusController;
 use App\Http\Controllers\Admin\DonationController;
@@ -19,6 +20,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::get('videos', [NoticeController::class, 'indexVideos']);
     Route::get('popups', [NoticeController::class, 'indexPopups']);
     Route::get('gongzimes', [NoticeController::class, 'indexGongzimes']);
+    Route::apiResource('boards', BoardController::class);
     Route::apiResource('posts', PostController::class);
     Route::apiResource('users', UserController::class);
     Route::apiResource('notices', NoticeController::class);
