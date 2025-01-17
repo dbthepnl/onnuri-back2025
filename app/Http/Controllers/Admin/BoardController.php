@@ -38,7 +38,6 @@ class BoardController extends Controller
         ->allowedSorts(['id', 'name_ko']);
         $data = $data->get();
         
-
         return new BoardResource($data);
     }
 

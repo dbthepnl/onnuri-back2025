@@ -26,13 +26,14 @@ class Cardinal extends Authenticatable implements HasMedia
       */
       protected $fillable = [
         'board_id',
+        'public',
         'title',
         'name_en',
         'start_at',
         'end_at',
         'cardinal_number',
         'trainers',
-        'train_place',
+        'trainer_place',
         'content',
         'created_at',
         'updated_at',

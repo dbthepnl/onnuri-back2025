@@ -25,22 +25,22 @@ class CardinalController extends Controller
      */
     public function index(Request $request)
     {
-            $data = QueryBuilder::for(Cardinal::class)
+        $data = QueryBuilder::for(Cardinal::class)
+            ->where("name_ko", $request->name_ko) //program
             ->allowedFilters([
                 AllowedFilter::callback('search', function ($query, $value) { //전체 검색
                     $query->where(function ($query) use ($value) {
                         $query->where('title', 'like', "%$value%");
                     });
                 }),
-            ])
-            ->allowedSorts(['id', 'name_ko']);
+            ]);
             
         $data = 
-        $data->leftJoin('boards', 'boards.id', '=', 'categories.board_id')
-            ->select('categories.*', 'boards.name as board_name')
+        $data->leftJoin('boards', 'boards.id', '=', 'cardinals.board_id')
+            ->select('cardinals.*', 'boards.name_ko')
             ->paginate(15);
         
-        return new CardinalCollection($users);
+        return new CardinalCollection($data);
     }
 
     /**
@@ -48,7 +48,27 @@ class CardinalController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'public' => 'nullable|string', //공개/비공개
+            'board_id' => 'nullable',
+            'title' => 'nullable',
+            'name_en' => 'nullable',
+            'start_at' => 'nullable',
+            'end_at' => 'nullable',
+            'cardinal_number' => 'nullable',
+            'trainers' => 'nullable',
+            'content' => 'nullable',
+            'trainer_place' => 'nullable',
+        ]);
+        $data['created_at'] = Carbon::now();
+        $data['updated_at'] = Carbon::now();
+
+        $post = Cardinal::create($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => '등록 완료'
+        ], 200);
     }
 
     /**
@@ -56,7 +76,15 @@ class CardinalController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {   
+            $data = Cardinal::findOrFail($id);
+            return new CardinalResource($data);
+            
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => '데이터 검증 실패',
+            ]);
+        }
     }
 
     /**
@@ -64,7 +92,17 @@ class CardinalController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+
+        return $request->all();
+        $data = Cardinal::findOrFail($id);
+        $request->updated_at = Carbon::now();
+        $request->created_at = Carbon::now();
+        $data->update($request->all());
+    
+        return response()->json([
+            'success' => true,
+            'message' => '업데이트 완료'
+        ], 200);
     }
 
     /**
@@ -72,6 +110,11 @@ class CardinalController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $data = Cardinal::findOrFail($id);
+        $data->forceDelete();
+        return response()->json([
+            'success' => true,
+            'message' => '삭제 완료'
+        ], 200);
     }
 }
