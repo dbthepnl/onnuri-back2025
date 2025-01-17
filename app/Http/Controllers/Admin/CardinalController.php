@@ -44,6 +44,19 @@ class CardinalController extends Controller
         return new CardinalCollection($data);
     }
 
+    public function cardinalList(Request $request) {
+        $data = QueryBuilder::for(Cardinal::class)
+        ->where("board_id", $request->board_id) //program
+        ->select('id')
+        ->orderBy('id', 'desc')->first();
+        
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+                'message' => '조회'
+            ], 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\Admin\UserRequest;
 
-class NoticeController extends Controller
+class TrainController extends Controller
 {
     /**
      * Display a listing of the resource.

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\AskController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\NoticeController;
+use App\Http\Controllers\Admin\TrainController;
 use App\Http\Controllers\Admin\ParticipantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BoardController;
@@ -24,11 +25,13 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::apiResource('boards', BoardController::class);
     Route::apiResource('posts', PostController::class);
     Route::apiResource('cardinals', CardinalController::class);
-    Route::apiResource('users', UserController::class);
-    Route::apiResource('notices', NoticeController::class);
-    Route::apiResource('participants', ParticipantController::class);
+    Route::get('latest-cardinal', [CardinalController::class, 'cardinalList']);
+    Route::apiResource('users', UserController::class); //회원관리
+    Route::apiResource('trains', TrainController::class); //훈련관리
+    Route::apiResource('notices', NoticeController::class); //소식관리
+    Route::apiResource('participants', ParticipantController::class); //참석자관리
     Route::apiResource('calendars', CalendarController::class);
-    Route::apiResource('asks', AskController::class);
+    Route::apiResource('asks', AskController::class); 
     Route::apiResource('buses', BusController::class);
     Route::apiResource('donations', DonationController::class);
     Route::post('donations/{id}', [DonationController::class, 'updateDonation']);
