@@ -6,6 +6,8 @@ use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Models\Post;
+use App\Http\Resources\TrainCollection;
+use App\Http\Resources\TrainResource;
 use App\Http\Resources\NoticeCollection;
 use App\Http\Resources\GongzimeCollection;
 use App\Http\Resources\NoticeResource;
@@ -27,6 +29,7 @@ class TrainController extends Controller
     public function index(Request $request)
     {
         $users = QueryBuilder::for(Post::class)
+        ->selectRaw('id, public, cardinal_id, board, title, content, end_at, start_at, updated_at, created_at')
         ->where("board", $request->board) //훈련관리:train / 공지관리:notice
         ->when($request->has('category'), function ($query) use ($request) {
             $query->where("category", $request->category); // 기본값 1: 공지사항
@@ -44,7 +47,7 @@ class TrainController extends Controller
         ->orderBy('updated_at', 'desc')
         ->paginate(15);
 
-        return new NoticeCollection($users);
+        return new TrainCollection($users);
     
     }    
 
@@ -61,6 +64,9 @@ class TrainController extends Controller
             'category' => 'nullable',
             'title' => 'required|string',
             'content' => 'nullable|string', 
+            'start_at' => 'nullable|string',
+            'end_at' => 'nullable|string',
+            'cardinal_id' => 'required|string',
         ]);
 
         $data['created_at'] = Carbon::now();
