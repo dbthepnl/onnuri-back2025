@@ -3,10 +3,11 @@
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\TrainController;
 use App\Http\Controllers\Admin\AskController;
+use App\Http\Controllers\Admin\FormController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\NoticeController;
-use App\Http\Controllers\Admin\TrainController;
 use App\Http\Controllers\Admin\ParticipantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BoardController;
@@ -29,6 +30,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::apiResource('users', UserController::class); //회원관리
     Route::apiResource('trains', TrainController::class); //훈련관리
     Route::apiResource('notices', NoticeController::class); //소식관리
+    Route::apiResource('forms', FormController::class); //신청서관리
     Route::apiResource('participants', ParticipantController::class); //참석자관리
     Route::apiResource('calendars', CalendarController::class);
     Route::apiResource('asks', AskController::class); 
@@ -40,5 +42,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::post('users/profile/{id}', [UserController::class, 'profile']);
     Route::post('notices/profile/{id}', [NoticeController::class, 'profile']);
     Route::post('notices/files/{id}', [NoticeController::class, 'fileUpdate']);
+    Route::post('trains/profile/{id}', [NoticeController::class, 'profile']);
+    Route::post('trains/files/{id}', [NoticeController::class, 'fileUpdate']);
     Route::post('store/image', [NoticeController::class, 'storeImage']);
 });

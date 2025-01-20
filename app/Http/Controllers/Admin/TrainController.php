@@ -28,9 +28,9 @@ class TrainController extends Controller
      */
     public function index(Request $request)
     {
-        $users = QueryBuilder::for(Post::class)
-        ->selectRaw('id, public, cardinal_id, board, title, content, end_at, start_at, updated_at, created_at')
-        ->where("board", $request->board) //훈련관리:train / 공지관리:notice
+
+        $data = QueryBuilder::for(Post::class)
+        ->where("board", $request->board) //event, message, news, assembly
         ->when($request->has('category'), function ($query) use ($request) {
             $query->where("category", $request->category); // 기본값 1: 공지사항
         })
@@ -42,14 +42,15 @@ class TrainController extends Controller
                 });
             }),
         ])
+        ->whereNotIn('category', [22, 23, 24])
         ->allowedSorts(['id', 'title'])
         ->orderBy('order', 'desc')
         ->orderBy('updated_at', 'desc')
         ->paginate(15);
+        
+        return new TrainCollection($data);
+    }
 
-        return new TrainCollection($users);
-    
-    }    
 
     /**
      * Store a newly created resource in storage.
@@ -67,6 +68,9 @@ class TrainController extends Controller
             'start_at' => 'nullable|string',
             'end_at' => 'nullable|string',
             'cardinal_id' => 'required|string',
+            'cardinal_check' => 'nullable|boolean',
+            'form_id' => 'nullable|string',
+            'form_check' => 'nullable|boolean'
         ]);
 
         $data['created_at'] = Carbon::now();
@@ -93,6 +97,21 @@ class TrainController extends Controller
         ], 200);
     }
 
+       /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+
+        $post = Post::findOrFail($id);
+        $post->update($request->all());
+    
+        return response()->json([
+            'success' => true,
+            'message' => '업데이트 완료'
+        ], 200);
+    }
+
     /**
      * Display the specified resource.
      */
@@ -100,7 +119,7 @@ class TrainController extends Controller
     {
         try {   
             $data = Post::findOrFail($id);
-            return new NoticeResource($data);
+            return new TrainResource($data);
             
         } catch (ValidationException $e) {
             return response()->json([

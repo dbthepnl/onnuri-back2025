@@ -29,6 +29,9 @@ class Notice extends Authenticatable implements HasMedia
      protected $fillable = [
             'title',
             'order',
+            'form_id',
+            'cardinal_check',
+            'form_check',
             'update_on',
             'public',
             'urls',
