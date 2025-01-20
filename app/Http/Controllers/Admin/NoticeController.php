@@ -87,6 +87,21 @@ class NoticeController extends Controller
         ], 200);
     }
 
+        /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+
+        $post = Post::findOrFail($id);
+        $post->update($request->all());
+    
+        return response()->json([
+            'success' => true,
+            'message' => '업데이트 완료'
+        ], 200);
+    }
+
     /**
      * Display the specified resource.
      */
