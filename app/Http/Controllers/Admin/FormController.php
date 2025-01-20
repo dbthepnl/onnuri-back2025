@@ -43,6 +43,17 @@ class FormController extends Controller
         return new FormCollection($data);
     }
 
+    public function indexElement(Request $request)
+    {
+        $data = DB::table('form_elements')->get();
+        
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+            'message' => '등록 완료'
+        ], 200);
+    }
+
     /**
      * Store a newly created resource in storage.
      */

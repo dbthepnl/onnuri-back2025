@@ -23,6 +23,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::get('videos', [NoticeController::class, 'indexVideos']);
     Route::get('popups', [NoticeController::class, 'indexPopups']);
     Route::get('gongzimes', [NoticeController::class, 'indexGongzimes']);
+    Route::get('form_elements', [FormController::class, 'indexElement']);
     Route::apiResource('boards', BoardController::class);
     Route::apiResource('posts', PostController::class);
     Route::apiResource('cardinals', CardinalController::class);
