@@ -66,7 +66,7 @@ class FormOptionController extends Controller
         return response()->json([
             'success' => true,
             'data' => $data,
-            'message' => '등록 조회'
+            'message' => '조회 완료'
         ], 200);
     }
 
