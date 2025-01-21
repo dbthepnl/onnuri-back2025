@@ -27,7 +27,7 @@ class FormOptionController extends Controller
     public function index(Request $request)
     {
         $data = QueryBuilder::for(FormOption::class)
-        ->where('id', $request->form_id)
+        ->where('form_id', $request->form_id)
         ->orderBy('order', 'desc')
         ->get();
         
