@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\TrainController;
+use App\Http\Controllers\Admin\FormOptionController;
 use App\Http\Controllers\Admin\AskController;
 use App\Http\Controllers\Admin\FormController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -24,6 +25,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::get('popups', [NoticeController::class, 'indexPopups']);
     Route::get('gongzimes', [NoticeController::class, 'indexGongzimes']);
     Route::get('form_elements', [FormController::class, 'indexElement']);
+    Route::apiResource('form_options', FormOptionController::class);
     Route::apiResource('boards', BoardController::class);
     Route::apiResource('posts', PostController::class);
     Route::apiResource('cardinals', CardinalController::class);
