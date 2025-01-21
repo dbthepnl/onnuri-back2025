@@ -102,7 +102,6 @@ class TrainController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
         $post = Post::findOrFail($id);
         $post->update($request->all());
     
