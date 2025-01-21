@@ -27,6 +27,7 @@ class FormOptionController extends Controller
     public function index(Request $request)
     {
         $data = QueryBuilder::for(FormOption::class)
+        ->where('id', $request->form_id)
         ->orderBy('order', 'desc')
         ->get();
         
@@ -40,22 +41,13 @@ class FormOptionController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'form_id' => 'required|boolean',
-            'order' => 'required|boolean',
-            'element' => 'nullable|string',
-            'element_name' => 'required|string',
-            'tag' => 'nullable|string', 
-            'required' => 'required|boolean',
-            'label' => 'nullable|string',
-            'values' => 'nullable|json',
-            'sub_text' => 'nullable|string',
-        ]);
 
-        $data['created_at'] = Carbon::now();
-        $data['updated_at'] = Carbon::now();
-        $data['user_id'] = 1;
+        $data = $request->all();
 
+        if (isset($data['values']) && is_array($data['values'])) {
+            $data['values'] = json_encode($data['values']);
+        }
+        
         $post = FormOption::create($data);
 
         return response()->json([
@@ -69,7 +61,13 @@ class FormOptionController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $data = FormOption::findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+            'message' => '등록 조회'
+        ], 200);
     }
 
     /**
@@ -77,7 +75,18 @@ class FormOptionController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $data = $request->all();
+
+        if (isset($data['values']) && is_array($data['values'])) {
+            $data['values'] = json_encode($data['values']);
+        }
+        
+        $post = FormOption::where('id', $id)->update($data);
+
+        return response()->json([
+            'success' => true,
+            'message' => '수정 완료'
+        ], 200);
     }
 
     /**
@@ -85,6 +94,11 @@ class FormOptionController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $data = FormOption::where('id', $id)->forceDelete();
+
+        return response()->json([
+            'success' => true,
+            'message' => '삭제 완료'
+        ], 200);
     }
 }
