@@ -68,9 +68,7 @@ class NoticeController extends Controller
         ->allowedSorts(['id', 'title'])
         ->orderBy('updated_at', 'desc')
         ->paginate(15);
-
         
-
         return new PopupCollection($data);
     
     }
