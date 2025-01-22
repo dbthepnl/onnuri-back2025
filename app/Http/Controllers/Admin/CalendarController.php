@@ -5,7 +5,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use App\Models\Calendar;
+use App\Models\Post;
 use App\Http\Resources\CalendarCollection;
 use App\Http\Resources\CalendarResource;
 use App\Http\Controllers\Controller;
@@ -25,10 +25,17 @@ class CalendarController extends Controller
      */
     public function index(Request $request)
     {
-        $users = QueryBuilder::for(Calendar::class)
-        ->where("board", $request->board) //event, message, news, assembly
+
+        $users = QueryBuilder::for(Post::class)
+        ->selectRaw('posts.*') // selectRaw
+        ->where("board", "calendar") //event, message, news, assembly
+        ->where('public', 1)
         ->when($request->has('category'), function ($query) use ($request) {
-            $query->where("category", $request->category); // 기본값 1: 공지사항
+            $query->where("category", $request->category); // 카테고리명 
+        })
+        ->when($request->has('month') && $request->has('year'), function ($query) use ($request) {
+            $query->whereYear('start_at', $request->year)
+                  ->whereMonth('start_at', $request->month);
         })
         ->allowedFilters([
             "title", //제목 검색
@@ -38,11 +45,22 @@ class CalendarController extends Controller
                 });
             }),
         ])
-        ->allowedSorts(['id', 'title'])
-        ->orderBy('updated_at', 'desc')
-        ->paginate(15);
-
-    return get();
+        ->allowedSorts(['id', 'title']);
+        if ($request->pageType == 'main') {
+            $users = $users->get();
+            $users->map(fn($e) => $e->append(['img']));
+            return response( $users);
+        }
+        
+        if ($request->pageType == 'list') {
+            $users = $users
+                ->orderByRaw("CASE WHEN posts.order = 1 THEN 1 ELSE 2 END")
+                ->orderBy('start_at', 'desc') 
+                ->paginate(15);
+            $users->map(fn($e) => $e->append(['img']));
+            return new CalendarCollection($users);
+        }
+    
     }
 
     /**
@@ -52,12 +70,18 @@ class CalendarController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|string',
+            'public' => 'required|boolean',
+            'order' => 'nullable',
+            'update_on' => 'nullable',
             'board' => 'required|string',
-            'content' => 'required|string', 
-            'start' => 'nullable|string',
-            'end' => 'nullable|string',
-            'background_color' => 'nullable|string',
-            'border_color' => 'nullable|string',
+            'bus_content' => 'nullable|string',
+            'safe_content' => 'nullable|string',
+            'category_id' => 'nullable',
+            'content' => 'nullable|string', 
+            'urls' => 'nullable|string', 
+            'start_at' => 'nullable|string',
+            'end_at' => 'nullable|string',
+            'time_at' => 'nullable|string',
         ]);
 
         $data['created_at'] = Carbon::now();
@@ -65,8 +89,19 @@ class CalendarController extends Controller
         $data['user_id'] = 1;
         $data['category'] = $request->category ?? 1;
 
-        $post = Calendar::create($data);
+        $post = Post::create($data);
+        
+        if($request->hasFile('notice_photo')){
+            $post->addMedia($request->file('notice_photo'))->toMediaCollection('n_photo', 's3');
+        }
 
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                $post->addMedia($file)
+                     ->toMediaCollection('files', 's3'); // Store in 'files' collection on S3
+            }
+        }
+    
         return response()->json([
             'success' => true,
             'message' => '등록 완료'
@@ -78,7 +113,15 @@ class CalendarController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {   
+            $data = Post::findOrFail($id);
+            return new CalendarCollection($data);
+            
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => '데이터 검증 실패',
+            ]);
+        }
     }
 
     /**
@@ -86,9 +129,8 @@ class CalendarController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $post = Calendar::findOrFail($id);
-    
-        $request->updated_at = Carbon::now();
+
+        $post = Post::findOrFail($id);
         $post->update($request->all());
     
         return response()->json([
@@ -97,12 +139,109 @@ class CalendarController extends Controller
         ], 200);
     }
 
+    public function updatePost(Request $request, string $id)
+    {
+        $post = Post::findOrFail($id);
+        $post->update($request->all());
+    
+        return response()->json([
+            'success' => true,
+            'message' => '업데이트 완료'
+        ], 200);
+    }
+
+
+    public function storeImage(Request $request)
+    {
+        $media = Auth::user()->addMedia($request->file('image'))->toMediaCollection('post_image');
+        return response()->json(['result' => true, 'data' => $media, 'message' => NULL]);
+    }
+
+    public function profile(Request $request, string $id) {
+        
+        $post = Post::findOrFail($id);
+
+        //이미지 삭제한 경우
+        if($request->status == 'delete'){
+            $post->clearMediaCollection('n_photo');
+        }
+        //이미지 업데이트한 경우
+        if($request->hasFile('notice_photo') && $request->status == 'update'){
+            $post->clearMediaCollection('n_photo');
+            $post->addMedia($request->file('notice_photo'))->toMediaCollection('n_photo', 's3');
+        }
+
+        //이미지 추가한 경우
+        if($request->hasFile('notice_photo') && $request->status == 'add'){
+            $post->addMedia($request->file('notice_photo'))->toMediaCollection('n_photo', 's3');
+        }
+
+        //이미지 기존걸 유지한 경우
+        if(!$request->hasFile('notice_photo') && $request->status == 'keep'){
+            $post->clearMediaCollection('n_photo');
+        }
+
+
+        return response()->json([
+            'success' => true,
+            'message' => '수정 완료'
+        ], 200);
+    }
+
+    public function fileUpdate(Request $request, string $id) {
+        $uploadedMedia = [];
+        $data = Post::where('id', $id)->first();
+        
+        if ($request->status == 'delete') { 
+           $data =  DB::table('media')->where('id', $request->media_id)->delete();
+        }
+
+        if ($request->status == 'add' &&  $request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                 $media = $data->addMedia($file)
+                     ->toMediaCollection('files', 's3'); 
+
+                $uploadedMedia[] = [
+                    'id' => $media->id,
+                    'url' => $media->getUrl(),  
+                    'name' => $media->file_name,
+                    'size' => $media->size,     
+                ];
+            }
+        }
+
+        if ($request->status == 'update' && $request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+
+                $media = $data->addMedia($file)
+                     ->toMediaCollection('files', 's3'); 
+
+                $uploadedMedia[] = [
+                    'url' => $media->getUrl(),  
+                    'name' => $media->file_name,
+                    'size' => $media->size,     
+                ];
+
+                
+            }
+            DB::table('media')->where('id', $request->media_id)->delete();
+
+        }
+
+
+        return response()->json([
+            'success' => true,
+            'message' => '수정 완료',
+            'uploaded_media' => $uploadedMedia,
+        ], 200);
+    }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        $post = Calendar::findOrFail($id);
+        $post = Post::findOrFail($id);
         $post->forceDelete();
         return response()->json([
             'success' => true,
