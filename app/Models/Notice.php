@@ -100,4 +100,5 @@ class Notice extends Authenticatable implements HasMedia
  
          return null;
      }
+
 }

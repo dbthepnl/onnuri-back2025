@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Models\Post;
 use App\Http\Resources\NoticeCollection;
+use App\Http\Resources\PopupCollection;
 use App\Http\Resources\GongzimeCollection;
 use App\Http\Resources\NoticeResource;
 use App\Http\Controllers\Controller;
@@ -54,6 +55,7 @@ class NoticeController extends Controller
     public function indexPopups(Request $request)
     {
         $data = QueryBuilder::for(Post::class)
+        ->selectRaw('id, public, title, urls')
         ->where("board", $request->board) //event, message, news, assembly
         ->allowedFilters([
             "title", //제목 검색
@@ -67,14 +69,9 @@ class NoticeController extends Controller
         ->orderBy('updated_at', 'desc')
         ->paginate(15);
 
-        $data->getCollection()->transform(function ($post) {
-            $post['file_exist'] = $post->hasMedia('files') ? 1 : 0; 
-            
-            return $post;
-        });
         
 
-        return new NoticeCollection($data);
+        return new PopupCollection($data);
     
     }
 
