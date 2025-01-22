@@ -68,6 +68,7 @@ class CalendarController extends Controller
      */
     public function store(Request $request)
     {
+
         $data = $request->validate([
             'title' => 'required|string',
             'public' => 'required|boolean',
@@ -84,10 +85,6 @@ class CalendarController extends Controller
             'time_at' => 'nullable|string',
         ]);
 
-        $data['created_at'] = Carbon::now();
-        $data['updated_at'] = Carbon::now();
-        $data['user_id'] = 1;
-        $data['category'] = $request->category ?? 1;
 
         $post = Post::create($data);
         

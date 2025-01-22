@@ -52,6 +52,7 @@ class UserController extends Controller
             'username' => 'required|string|max:16|unique:users',
             'phone' => 'required|numeric|digits_between:10,11',
             'name' => 'required|max:255',
+            'gender' => 'nullable',
             'birth' => 'required|numeric|digits:8',
             'birth_type' => 'numeric|nullable',
             'address' => 'nullable|max:255',
@@ -60,6 +61,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'homepage' => 'nullable|max:255',
             'officers' => 'numeric|nullable',
+            'role' => 'numeric|nullable',
             'password' => 'required|min:6|confirmed'
         ]);
 
