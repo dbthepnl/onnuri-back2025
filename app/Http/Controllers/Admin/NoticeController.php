@@ -49,6 +49,36 @@ class NoticeController extends Controller
     }    
 
     /**
+     * Display a listing of the resource.
+     */
+    public function indexPopups(Request $request)
+    {
+        $data = QueryBuilder::for(Post::class)
+        ->where("board", $request->board) //event, message, news, assembly
+        ->allowedFilters([
+            "title", //제목 검색
+            AllowedFilter::callback('search', function ($query, $value) { //전체 검색
+                $query->where(function ($query) use ($value) {
+                    $query->where('title', 'like', "%$value%");
+                });
+            }),
+        ])
+        ->allowedSorts(['id', 'title'])
+        ->orderBy('updated_at', 'desc')
+        ->paginate(15);
+
+        $data->getCollection()->transform(function ($post) {
+            $post['file_exist'] = $post->hasMedia('files') ? 1 : 0; 
+            
+            return $post;
+        });
+        
+
+        return new NoticeCollection($data);
+    
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
@@ -59,6 +89,7 @@ class NoticeController extends Controller
             'board' => 'required|string',
             'order' => 'required|boolean',
             'category' => 'nullable',
+            'urls' => 'nullable',
             'title' => 'required|string',
             'content' => 'nullable|string', 
         ]);
