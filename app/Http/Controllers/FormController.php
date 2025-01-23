@@ -125,6 +125,56 @@ class FormController extends Controller
             }
         }
 
+
+        if($request->step_id == 3) {
+            if($post) {
+                $church_info = json_encode($request->input('church_info'));  
+                $work_info = json_encode($request->input('work_info'));  
+                $disciple_info = json_encode($request->input('disciple_info')); 
+                $faith_info = json_encode($request->input('faith_info'));  
+                $mission_info = json_encode($request->input('mission_info')); 
+                $dispatch_info = json_encode($request->input('dispatch_info')); 
+
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['church_info'] = $church_info;
+                $record['work_info'] = $work_info;
+                $record['disciple_info'] = $disciple_info;
+                $record['faith_info'] = $faith_info;
+                $record['mission_info'] = $mission_info;
+                $record['dispatch_info'] = $dispatch_info;
+
+                $data = 
+                DB::table($tableName)
+                ->where('board_id', $request->board_id)
+                ->where('cardinal_id', $request->cardinal_id)
+                ->where('user_id', Auth::user()->id)
+                ->update($record);
+                return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
+            } else {
+                $church_info = json_encode($request->input('church_info'));  
+                $work_info = json_encode($request->input('work_info'));  
+                $disciple_info = json_encode($request->input('disciple_info')); 
+                $faith_info = json_encode($request->input('faith_info'));  
+                $mission_info = json_encode($request->input('mission_info')); 
+                $dispatch_info = json_encode($request->input('dispatch_info')); 
+
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['church_info'] = $church_info;
+                $record['work_info'] = $work_info;
+                $record['disciple_info'] = $disciple_info;
+                $record['faith_info'] = $faith_info;
+                $record['mission_info'] = $mission_info;
+                $record['dispatch_info'] = $dispatch_info;
+    
+                $data = DB::table($tableName)->insert($record);
+                return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
+            }
+        }
+
         return response()->json(['result' => false, 'data' => $data, 'message' => '데이터 등록 실패']);
     }
 

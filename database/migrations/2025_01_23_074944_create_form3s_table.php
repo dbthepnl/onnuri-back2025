@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('form3s', function (Blueprint $table) {
             $table->id();
+            $table->boolean('public')->default(true);
+            $table->foreignId('user_id')->nullable();
+            $table->integer('board_id')->default(0);
+            $table->integer('cardinal_id')->default(0);
+            $table->json('church_info')->nullable();
+            $table->json('work_info')->nullable();
+            $table->json('disciple_info')->nullable();
+            $table->json('faith_info')->nullable();
+            $table->json('mission_info')->nullable();
+            $table->json('dispatch_info')->nullable();
             $table->timestamps();
         });
     }
