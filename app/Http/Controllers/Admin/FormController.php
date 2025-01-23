@@ -6,6 +6,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Models\Form;
+use App\Models\Form1;
 use App\Http\Resources\FormCollection;
 use App\Http\Resources\FormResource;
 use App\Http\Resources\GongzimeCollection;
@@ -52,6 +53,51 @@ class FormController extends Controller
             'data' => $data,
             'message' => '등록 완료'
         ], 200);
+    }
+
+    //신청자 관리
+    public function registerIndex(Request $request)
+    {
+        $data = QueryBuilder::for(Form1::class)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->allowedFilters([
+            "name", //제목 검색
+            AllowedFilter::callback('search', function ($query, $value) { //전체 검색
+                $query->where(function ($query) use ($value) {
+                    $query->where('name', 'like', "%$value%");
+                });
+            }),
+        ])
+        ->allowedSorts(['id', 'name'])
+        ->orderBy('order', 'desc')
+        ->orderBy('updated_at', 'desc')
+        ->paginate(15);
+        
+        return new FormCollection($data);
+    }
+
+    //신청자 관리
+    public function registerShow(Request $request, $id)
+    {
+        $form1 = Form1::where('user_id', $id)->get();
+
+        return response()->json([
+            'result' => true,
+            'data' =>
+            [
+                'form1' => $form1,
+                'form2' => NULL,
+                'form3' => NULL,
+                'form4' => NULL,
+                'form5' => NULL,
+                'form6' => NULL,
+                'form7' => NULL,
+                'form8' => NULL,
+                'form9' => NULL
+            ],
+            'message' => '조회 완료'
+        ]);
     }
 
     /**
