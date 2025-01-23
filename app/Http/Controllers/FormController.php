@@ -58,6 +58,7 @@ class FormController extends Controller
         ->where('user_id', Auth::user()->id)
         ->first();
 
+        //STEP 1
         if($request->step_id == 1) {
             if($post) {
                 $record = $request->except('step_id');
@@ -79,6 +80,7 @@ class FormController extends Controller
             }
         }
 
+        //STEP 2
         if($request->step_id == 2) {
             if($post) {
                 $school_info = json_encode($request->input('school_info'));  
@@ -125,8 +127,58 @@ class FormController extends Controller
             }
         }
 
-
+        //STEP 3
         if($request->step_id == 3) {
+            if($post) {
+                $church_info = json_encode($request->input('church_info'));  
+                $work_info = json_encode($request->input('work_info'));  
+                $disciple_info = json_encode($request->input('disciple_info')); 
+                $faith_info = json_encode($request->input('faith_info'));  
+                $mission_info = json_encode($request->input('mission_info')); 
+                $dispatch_info = json_encode($request->input('dispatch_info')); 
+
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['church_info'] = $church_info;
+                $record['work_info'] = $work_info;
+                $record['disciple_info'] = $disciple_info;
+                $record['faith_info'] = $faith_info;
+                $record['mission_info'] = $mission_info;
+                $record['dispatch_info'] = $dispatch_info;
+
+                $data = 
+                DB::table($tableName)
+                ->where('board_id', $request->board_id)
+                ->where('cardinal_id', $request->cardinal_id)
+                ->where('user_id', Auth::user()->id)
+                ->update($record);
+                return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
+            } else {
+                $church_info = json_encode($request->input('church_info'));  
+                $work_info = json_encode($request->input('work_info'));  
+                $disciple_info = json_encode($request->input('disciple_info')); 
+                $faith_info = json_encode($request->input('faith_info'));  
+                $mission_info = json_encode($request->input('mission_info')); 
+                $dispatch_info = json_encode($request->input('dispatch_info')); 
+
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['church_info'] = $church_info;
+                $record['work_info'] = $work_info;
+                $record['disciple_info'] = $disciple_info;
+                $record['faith_info'] = $faith_info;
+                $record['mission_info'] = $mission_info;
+                $record['dispatch_info'] = $dispatch_info;
+    
+                $data = DB::table($tableName)->insert($record);
+                return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
+            }
+        }
+
+        //STEP 4
+        if($request->step_id == 4) {
             if($post) {
                 $church_info = json_encode($request->input('church_info'));  
                 $work_info = json_encode($request->input('work_info'));  
