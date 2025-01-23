@@ -32,8 +32,7 @@ class TrainController extends Controller
     {
 
         $data = QueryBuilder::for(Post::class)
-        ->selectRaw('id, name_ko, name_en')
-        ->where("board", $request->board) //event, message, news, assembly
+        ->where("board", $request->board) //훈련관리:train / 공지관리:notice
         ->when($request->has('category'), function ($query) use ($request) {
             $query->where("category", $request->category); // 기본값 1: 공지사항
         })
@@ -45,7 +44,6 @@ class TrainController extends Controller
                 });
             }),
         ])
-        ->whereNotIn('category', [22, 23, 24])
         ->allowedSorts(['id', 'title'])
         ->orderBy('order', 'desc')
         ->orderBy('updated_at', 'desc')
@@ -83,6 +81,8 @@ class TrainController extends Controller
 
         $data = $request->validate([
             'public' => 'required|boolean',
+            'board_id' => 'required|string',
+            'cardinal_id' => 'required|string',
             'board' => 'required|string',
             'order' => 'required|boolean',
             'category' => 'nullable',
@@ -90,7 +90,6 @@ class TrainController extends Controller
             'content' => 'nullable|string', 
             'start_at' => 'nullable|string',
             'end_at' => 'nullable|string',
-            'cardinal_id' => 'required|string',
             'cardinal_check' => 'nullable|boolean',
             'form_id' => 'nullable|string',
             'form_check' => 'nullable|boolean'
