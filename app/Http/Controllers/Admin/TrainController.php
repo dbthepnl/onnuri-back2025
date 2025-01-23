@@ -6,6 +6,8 @@ use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Models\Post;
+use App\Models\Board;
+use App\Models\Cardinal;
 use App\Http\Resources\TrainCollection;
 use App\Http\Resources\TrainResource;
 use App\Http\Resources\NoticeCollection;
@@ -30,6 +32,7 @@ class TrainController extends Controller
     {
 
         $data = QueryBuilder::for(Post::class)
+        ->selectRaw('id, name_ko, name_en')
         ->where("board", $request->board) //event, message, news, assembly
         ->when($request->has('category'), function ($query) use ($request) {
             $query->where("category", $request->category); // 기본값 1: 공지사항
@@ -49,6 +52,26 @@ class TrainController extends Controller
         ->paginate(15);
         
         return new TrainCollection($data);
+    }
+
+    public function boardCategory(Request $request){
+        $data = QueryBuilder::for(Board::class)
+        ->selectRaw('id, name_en, name_ko')
+        ->where("name_en", "program") //program
+        ->allowedSorts(['id', 'name_ko']);
+        $data = $data->get();
+        
+        return response()->json(['result' => true, 'data' => $data, 'message' => 'success']);
+    }
+
+    public function cardinalCategory(Request $request) {
+        $data = QueryBuilder::for(Cardinal::class)
+            ->selectRaw('id, board_id, title, name_en, cardinal_number')
+            ->where("board_id", $request->board_id) //program
+            ->orderBy('cardinal_number', 'desc')
+            ->get();
+        
+            return response()->json(['result' => true, 'data' => $data, 'message' => 'success']);
     }
 
 

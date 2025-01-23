@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ParticipantController;
 use App\Http\Controllers\AskController;
+use App\Http\Controllers\TrainController;
 use App\Http\Controllers\NoticeController;
 use Illuminate\Support\Facades\Route;
 

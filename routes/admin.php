@@ -32,6 +32,8 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::get('latest-cardinal', [CardinalController::class, 'cardinalList']);
     Route::apiResource('users', UserController::class); //회원관리
     Route::apiResource('trains', TrainController::class); //훈련관리
+    Route::get('cardinal-category', [TrainController::class, 'cardinalCategory']);
+    Route::get('board-category', [TrainController::class, 'boardCategory']);
     Route::apiResource('notices', NoticeController::class); //소식관리
     Route::apiResource('forms', FormController::class); //신청서관리
     Route::apiResource('participants', ParticipantController::class); //참석자관리
