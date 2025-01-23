@@ -79,6 +79,52 @@ class FormController extends Controller
             }
         }
 
+        if($request->step_id == 2) {
+            if($post) {
+                $school_info = json_encode($request->input('school_info'));  
+                $language_info = json_encode($request->input('language_info'));  
+                $personal_info = json_encode($request->input('personal_info')); 
+                $technician_info = json_encode($request->input('technician_info'));  
+                $military_info = json_encode($request->input('military_info')); 
+
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['school_info'] = $school_info;
+                $record['language_info'] = $language_info;
+                $record['personal_info'] = $personal_info;
+                $record['technician_info'] = $technician_info;
+                $record['military_info'] = $$military_info;
+
+                $data = 
+                DB::table($tableName)
+                ->where('board_id', $request->board_id)
+                ->where('cardinal_id', $request->cardinal_id)
+                ->where('user_id', Auth::user()->id)
+                ->update($record);
+                return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
+            } else {
+                $school_info = json_encode($request->input('school_info'));  
+                $language_info = json_encode($request->input('language_info'));  
+                $personal_info = json_encode($request->input('personal_info')); 
+                $technician_info = json_encode($request->input('technician_info'));  
+                $military_info = json_encode($request->input('military_info')); 
+
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['school_info'] = $school_info;
+                $record['language_info'] = $language_info;
+                $record['personal_info'] = $personal_info;
+                $record['technician_info'] = $technician_info;
+                $record['military_info'] = $military_info;
+
+    
+                $data = DB::table($tableName)->insert($record);
+                return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
+            }
+        }
+
         return response()->json(['result' => false, 'data' => $data, 'message' => '데이터 등록 실패']);
     }
 

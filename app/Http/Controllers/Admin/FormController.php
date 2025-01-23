@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Models\Form;
 use App\Models\Form1;
+use App\Models\Form2;
 use App\Http\Resources\FormCollection;
 use App\Http\Resources\FormResource;
 use App\Http\Resources\GongzimeCollection;
@@ -81,13 +82,14 @@ class FormController extends Controller
     public function registerShow(Request $request, $id)
     {
         $form1 = Form1::where('user_id', $id)->get();
+        $form2 = Form2::where('user_id', $id)->get();
 
         return response()->json([
             'result' => true,
             'data' =>
             [
                 'form1' => $form1,
-                'form2' => NULL,
+                'form2' => $form2,
                 'form3' => NULL,
                 'form4' => NULL,
                 'form5' => NULL,
