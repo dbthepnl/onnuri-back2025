@@ -10,6 +10,7 @@ use App\Models\Form1;
 use App\Models\Form2;
 use App\Models\Form3;
 use App\Models\Form4;
+use App\Models\Form5;
 use App\Http\Resources\FormCollection;
 use App\Http\Resources\FormResource;
 use App\Http\Resources\GongzimeCollection;
@@ -96,7 +97,7 @@ class FormController extends Controller
                 'form2' => $form2,
                 'form3' => $form3,
                 'form4' => $form4,
-                'form5' => NULL,
+                'form5' => $form5,
                 'form6' => NULL,
                 'form7' => NULL,
                 'form8' => NULL,

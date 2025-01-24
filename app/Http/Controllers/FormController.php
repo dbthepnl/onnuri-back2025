@@ -80,7 +80,7 @@ class FormController extends Controller
 
         //STEP 5
         if($request->step_id == 5) {
-            return $this->handleStep4($request, $tableName, $post);            
+            return $this->handleStep5($request, $tableName, $post);            
         }
 
         return response()->json(['result' => false, 'data' => $data, 'message' => '데이터 등록 실패']);
@@ -254,6 +254,38 @@ class FormController extends Controller
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['family_info'] = $family_info;
+            $data = DB::table($tableName)->insert($record);
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
+        }
+    }
+
+
+    private function handleStep5($request, $tableName, $post) {
+        if($post) {
+            $health_info = json_encode($request->input('health_info'));  
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['health_info'] = $health_info;
+
+            $data = 
+            DB::table($tableName)
+            ->where('board_id', $request->board_id)
+            ->where('cardinal_id', $request->cardinal_id)
+            ->where('user_id', Auth::user()->id)
+            ->update($record);
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
+
+        } else {
+            $health_info = json_encode($request->input('health_info'));  
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['health_info'] = $health_info;
             $data = DB::table($tableName)->insert($record);
 
             return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
