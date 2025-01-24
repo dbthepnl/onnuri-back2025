@@ -83,6 +83,26 @@ class FormController extends Controller
             return $this->handleStep5($request, $tableName, $post);            
         }
 
+        //STEP 6
+        if($request->step_id == 6) {
+            return $this->handleStep6($request, $tableName, $post);            
+        }
+
+        //STEP 7
+        if($request->step_id == 7) {
+            return $this->handleStep7($request, $tableName, $post);            
+        }
+
+        //STEP 8
+        if($request->step_id == 8) {
+            return $this->handleStep8($request, $tableName, $post);            
+        }
+
+        //STEP 9
+        if($request->step_id == 9) {
+            return $this->handleStep9($request, $tableName, $post);            
+        }
+
         return response()->json(['result' => false, 'data' => $data, 'message' => '데이터 등록 실패']);
     }
 
@@ -286,6 +306,118 @@ class FormController extends Controller
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['health_info'] = $health_info;
+            $data = DB::table($tableName)->insert($record);
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
+        }
+    }
+
+    private function handleStep6($request, $tableName, $post) {
+        if($post) {
+            $recommend_info1 = json_encode($request->input('recommend_info1'));  
+            $recommend_info2 = json_encode($request->input('recommend_info2'));  
+            $recommend_info3 = json_encode($request->input('recommend_info3'));  
+            $recommend_info4 = json_encode($request->input('recommend_info4'));  
+            $recommend_info5 = json_encode($request->input('recommend_info5'));  
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['recommend_info1'] = $recommend_info1;
+            $record['recommend_info2'] = $recommend_info2;
+            $record['recommend_info3'] = $recommend_info3;
+            $record['recommend_info4'] = $recommend_info4;
+            $record['recommend_info5'] = $recommend_info5;
+
+
+            $data = 
+            DB::table($tableName)
+            ->where('board_id', $request->board_id)
+            ->where('cardinal_id', $request->cardinal_id)
+            ->where('user_id', Auth::user()->id)
+            ->update($record);
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
+
+        } else {
+            $recommend_info1 = json_encode($request->input('recommend_info1'));  
+            $recommend_info2 = json_encode($request->input('recommend_info2'));  
+            $recommend_info3 = json_encode($request->input('recommend_info3'));  
+            $recommend_info4 = json_encode($request->input('recommend_info4'));  
+            $recommend_info5 = json_encode($request->input('recommend_info5'));  
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['recommend_info1'] = $recommend_info1;
+            $record['recommend_info2'] = $recommend_info2;
+            $record['recommend_info3'] = $recommend_info3;
+            $record['recommend_info4'] = $recommend_info4;
+            $record['recommend_info5'] = $recommend_info5;
+            $data = DB::table($tableName)->insert($record);
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
+        }
+    }
+
+    private function handleStep7($request, $tableName, $post) {
+        if($post) {
+            $testimony_info = json_encode($request->input('testimony_info'));  
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['testimony_info'] = $testimony_info;
+
+
+            $data = 
+            DB::table($tableName)
+            ->where('board_id', $request->board_id)
+            ->where('cardinal_id', $request->cardinal_id)
+            ->where('user_id', Auth::user()->id)
+            ->update($record);
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
+
+        } else {
+            $testimony_info = json_encode($request->input('testimony_info'));  
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['testimony_info'] = $testimony_info;
+            $data = DB::table($tableName)->insert($record);
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
+        }
+    }
+
+    private function handleStep8($request, $tableName, $post) {
+        if($post) {
+            $vision_info = json_encode($request->input('vision_info'));  
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['vision_info'] = $vision_info;
+
+
+            $data = 
+            DB::table($tableName)
+            ->where('board_id', $request->board_id)
+            ->where('cardinal_id', $request->cardinal_id)
+            ->where('user_id', Auth::user()->id)
+            ->update($record);
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
+
+        } else {
+            $vision_info = json_encode($request->input('vision_info'));  
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['vision_info'] = $vision_info;
             $data = DB::table($tableName)->insert($record);
 
             return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);

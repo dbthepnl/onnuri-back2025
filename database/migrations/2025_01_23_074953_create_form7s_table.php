@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('form7s', function (Blueprint $table) {
             $table->id();
+            $table->boolean('public')->default(true);
+            $table->foreignId('user_id')->nullable();
+            $table->integer('board_id')->default(0);
+            $table->integer('cardinal_id')->default(0);
+            $table->json('testimony_info')->nullable();
             $table->timestamps();
         });
     }

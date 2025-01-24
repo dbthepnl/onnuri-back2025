@@ -12,6 +12,8 @@ use App\Models\Form3;
 use App\Models\Form4;
 use App\Models\Form5;
 use App\Models\Form6;
+use App\Models\Form7;
+use App\Models\Form8;
 use App\Http\Resources\FormCollection;
 use App\Http\Resources\FormResource;
 use App\Http\Resources\GongzimeCollection;
@@ -90,6 +92,10 @@ class FormController extends Controller
         $form3 = Form3::where('user_id', $id)->get();
         $form4 = Form4::where('user_id', $id)->get();
         $form5 = Form5::where('user_id', $id)->get();
+        $form6 = Form6::where('user_id', $id)->get();
+        $form7 = Form7::where('user_id', $id)->get();
+        $form8 = Form8::where('user_id', $id)->get();
+       // $form9 = Form9::where('user_id', $id)->get();
 
 
         return response()->json([
@@ -101,10 +107,10 @@ class FormController extends Controller
                 'form3' => $form3,
                 'form4' => $form4,
                 'form5' => $form5,
-                'form6' => NULL,
-                'form7' => NULL,
-                'form8' => NULL,
-                'form9' => NULL
+                'form6' => $form6,
+                'form7' => $form7,
+                'form8' => $form8,
+              //  'form9' => $form9
             ],
             'message' => '조회 완료'
         ]);

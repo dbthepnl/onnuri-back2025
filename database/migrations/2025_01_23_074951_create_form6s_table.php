@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('form6s', function (Blueprint $table) {
             $table->id();
+            $table->boolean('public')->default(true);
+            $table->foreignId('user_id')->nullable();
+            $table->integer('board_id')->default(0);
+            $table->integer('cardinal_id')->default(0);
+            $table->json('recommend_info1')->nullable();
+            $table->json('recommend_info2')->nullable();
+            $table->json('recommend_info3')->nullable();
+            $table->json('recommend_info4')->nullable();
+            $table->json('recommend_info5')->nullable();
             $table->timestamps();
         });
     }
