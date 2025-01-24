@@ -474,6 +474,39 @@ class FormController extends Controller
                 ->where('user_id', Auth::user()->id)
                 ->update($record);
             } 
+
+            if($request->input('info5')) {
+                $infoFive = json_encode($request->input('info5'));  
+                $record['info5'] = $infoFive;
+                $data = 
+                DB::table($tableName)
+                ->where('board_id', $request->board_id)
+                ->where('cardinal_id', $request->cardinal_id)
+                ->where('user_id', Auth::user()->id)
+                ->update($record);
+            } 
+
+            if($request->input('info6')) {
+                $infoSix = json_encode($request->input('info6'));  
+                $record['info6'] = $infoSix;
+                $data = 
+                DB::table($tableName)
+                ->where('board_id', $request->board_id)
+                ->where('cardinal_id', $request->cardinal_id)
+                ->where('user_id', Auth::user()->id)
+                ->update($record);
+            } 
+
+            if($request->input('info7')) {
+                $infoSeven = json_encode($request->input('info7'));  
+                $record['info7'] = $infoSeven;
+                $data = 
+                DB::table($tableName)
+                ->where('board_id', $request->board_id)
+                ->where('cardinal_id', $request->cardinal_id)
+                ->where('user_id', Auth::user()->id)
+                ->update($record);
+            } 
         
 
             return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
@@ -512,6 +545,33 @@ class FormController extends Controller
                 $record['user_id'] = Auth::user()->id;
                 $record['created_at'] = Carbon::now();
                 $record['info4'] = $infoFour;
+                $data = DB::table($tableName)->insert($record);
+            } 
+
+            if($request->input('info5')) {
+                $infoFive = json_encode($request->input('info5'));  
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['info5'] = $infoFive;
+                $data = DB::table($tableName)->insert($record);
+            } 
+
+            if($request->input('info6')) {
+                $infoSix = json_encode($request->input('info6'));  
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['info6'] = $infoSix;
+                $data = DB::table($tableName)->insert($record);
+            } 
+
+            if($request->input('info7')) {
+                $infoSeven = json_encode($request->input('info7'));  
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['info7'] = $infoSeven;
                 $data = DB::table($tableName)->insert($record);
             } 
 

@@ -13,6 +13,15 @@ return new class extends Migration
     {
         Schema::create('form9s', function (Blueprint $table) {
             $table->id();
+            $table->json('info1')->nullable();
+            $table->json('info2')->nullable();
+            $table->json('info3')->nullable();
+            $table->json('info4')->nullable();
+            $table->json('info5')->nullable();
+            $table->json('info6')->nullable();
+            $table->json('info7')->nullable();
+            $table->json('info8')->nullable();
+            $table->json('info9')->nullable();
             $table->timestamps();
         });
     }
