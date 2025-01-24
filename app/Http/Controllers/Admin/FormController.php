@@ -11,6 +11,7 @@ use App\Models\Form2;
 use App\Models\Form3;
 use App\Models\Form4;
 use App\Models\Form5;
+use App\Models\Form6;
 use App\Http\Resources\FormCollection;
 use App\Http\Resources\FormResource;
 use App\Http\Resources\GongzimeCollection;
@@ -88,6 +89,7 @@ class FormController extends Controller
         $form2 = Form2::where('user_id', $id)->get();
         $form3 = Form3::where('user_id', $id)->get();
         $form4 = Form4::where('user_id', $id)->get();
+        $form5 = Form4::where('user_id', $id)->get();
 
         return response()->json([
             'result' => true,
