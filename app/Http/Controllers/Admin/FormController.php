@@ -89,7 +89,8 @@ class FormController extends Controller
         $form2 = Form2::where('user_id', $id)->get();
         $form3 = Form3::where('user_id', $id)->get();
         $form4 = Form4::where('user_id', $id)->get();
-        $form5 = Form4::where('user_id', $id)->get();
+        $form5 = Form5::where('user_id', $id)->get();
+
 
         return response()->json([
             'result' => true,
