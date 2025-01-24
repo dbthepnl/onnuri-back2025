@@ -60,171 +60,27 @@ class FormController extends Controller
 
         //STEP 1
         if($request->step_id == 1) {
-            if($post) {
-                $record = $request->except('step_id');
-                $record['user_id'] = Auth::user()->id;
-                $record['created_at'] = Carbon::now();
-                $data = 
-                DB::table($tableName)
-                ->where('board_id', $request->board_id)
-                ->where('cardinal_id', $request->cardinal_id)
-                ->where('user_id', Auth::user()->id)
-                ->update($record);
-                return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
-            } else {
-                $record = $request->except('step_id');
-                $record['user_id'] = Auth::user()->id;
-                $record['created_at'] = Carbon::now();
-                $data = DB::table($tableName)->insert($record);
-                return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
-            }
+            return $this->handleStep1($request, $tableName, $post);
         }
 
         //STEP 2
         if($request->step_id == 2) {
-            if($post) {
-                $school_info = json_encode($request->input('school_info'));  
-                $language_info = json_encode($request->input('language_info'));  
-                $personal_info = json_encode($request->input('personal_info')); 
-                $technician_info = json_encode($request->input('technician_info'));  
-                $military_info = json_encode($request->input('military_info')); 
-
-                $record = $request->except('step_id');
-                $record['user_id'] = Auth::user()->id;
-                $record['created_at'] = Carbon::now();
-                $record['school_info'] = $school_info;
-                $record['language_info'] = $language_info;
-                $record['personal_info'] = $personal_info;
-                $record['technician_info'] = $technician_info;
-                $record['military_info'] = $$military_info;
-
-                $data = 
-                DB::table($tableName)
-                ->where('board_id', $request->board_id)
-                ->where('cardinal_id', $request->cardinal_id)
-                ->where('user_id', Auth::user()->id)
-                ->update($record);
-                return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
-            } else {
-                $school_info = json_encode($request->input('school_info'));  
-                $language_info = json_encode($request->input('language_info'));  
-                $personal_info = json_encode($request->input('personal_info')); 
-                $technician_info = json_encode($request->input('technician_info'));  
-                $military_info = json_encode($request->input('military_info')); 
-
-                $record = $request->except('step_id');
-                $record['user_id'] = Auth::user()->id;
-                $record['created_at'] = Carbon::now();
-                $record['school_info'] = $school_info;
-                $record['language_info'] = $language_info;
-                $record['personal_info'] = $personal_info;
-                $record['technician_info'] = $technician_info;
-                $record['military_info'] = $military_info;
-
-    
-                $data = DB::table($tableName)->insert($record);
-                return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
-            }
+            return $this->handleStep2($request, $tableName, $post);            
         }
 
         //STEP 3
         if($request->step_id == 3) {
-            if($post) {
-                $church_info = json_encode($request->input('church_info'));  
-                $work_info = json_encode($request->input('work_info'));  
-                $disciple_info = json_encode($request->input('disciple_info')); 
-                $faith_info = json_encode($request->input('faith_info'));  
-                $mission_info = json_encode($request->input('mission_info')); 
-                $dispatch_info = json_encode($request->input('dispatch_info')); 
-
-                $record = $request->except('step_id');
-                $record['user_id'] = Auth::user()->id;
-                $record['created_at'] = Carbon::now();
-                $record['church_info'] = $church_info;
-                $record['work_info'] = $work_info;
-                $record['disciple_info'] = $disciple_info;
-                $record['faith_info'] = $faith_info;
-                $record['mission_info'] = $mission_info;
-                $record['dispatch_info'] = $dispatch_info;
-
-                $data = 
-                DB::table($tableName)
-                ->where('board_id', $request->board_id)
-                ->where('cardinal_id', $request->cardinal_id)
-                ->where('user_id', Auth::user()->id)
-                ->update($record);
-                return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
-            } else {
-                $church_info = json_encode($request->input('church_info'));  
-                $work_info = json_encode($request->input('work_info'));  
-                $disciple_info = json_encode($request->input('disciple_info')); 
-                $faith_info = json_encode($request->input('faith_info'));  
-                $mission_info = json_encode($request->input('mission_info')); 
-                $dispatch_info = json_encode($request->input('dispatch_info')); 
-
-                $record = $request->except('step_id');
-                $record['user_id'] = Auth::user()->id;
-                $record['created_at'] = Carbon::now();
-                $record['church_info'] = $church_info;
-                $record['work_info'] = $work_info;
-                $record['disciple_info'] = $disciple_info;
-                $record['faith_info'] = $faith_info;
-                $record['mission_info'] = $mission_info;
-                $record['dispatch_info'] = $dispatch_info;
-    
-                $data = DB::table($tableName)->insert($record);
-                return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
-            }
+            return $this->handleStep3($request, $tableName, $post);
         }
 
         //STEP 4
         if($request->step_id == 4) {
-            if($post) {
-                $church_info = json_encode($request->input('church_info'));  
-                $work_info = json_encode($request->input('work_info'));  
-                $disciple_info = json_encode($request->input('disciple_info')); 
-                $faith_info = json_encode($request->input('faith_info'));  
-                $mission_info = json_encode($request->input('mission_info')); 
-                $dispatch_info = json_encode($request->input('dispatch_info')); 
+            return $this->handleStep4($request, $tableName, $post);            
+        }
 
-                $record = $request->except('step_id');
-                $record['user_id'] = Auth::user()->id;
-                $record['created_at'] = Carbon::now();
-                $record['church_info'] = $church_info;
-                $record['work_info'] = $work_info;
-                $record['disciple_info'] = $disciple_info;
-                $record['faith_info'] = $faith_info;
-                $record['mission_info'] = $mission_info;
-                $record['dispatch_info'] = $dispatch_info;
-
-                $data = 
-                DB::table($tableName)
-                ->where('board_id', $request->board_id)
-                ->where('cardinal_id', $request->cardinal_id)
-                ->where('user_id', Auth::user()->id)
-                ->update($record);
-                return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
-            } else {
-                $church_info = json_encode($request->input('church_info'));  
-                $work_info = json_encode($request->input('work_info'));  
-                $disciple_info = json_encode($request->input('disciple_info')); 
-                $faith_info = json_encode($request->input('faith_info'));  
-                $mission_info = json_encode($request->input('mission_info')); 
-                $dispatch_info = json_encode($request->input('dispatch_info')); 
-
-                $record = $request->except('step_id');
-                $record['user_id'] = Auth::user()->id;
-                $record['created_at'] = Carbon::now();
-                $record['church_info'] = $church_info;
-                $record['work_info'] = $work_info;
-                $record['disciple_info'] = $disciple_info;
-                $record['faith_info'] = $faith_info;
-                $record['mission_info'] = $mission_info;
-                $record['dispatch_info'] = $dispatch_info;
-    
-                $data = DB::table($tableName)->insert($record);
-                return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
-            }
+        //STEP 5
+        if($request->step_id == 5) {
+            return $this->handleStep4($request, $tableName, $post);            
         }
 
         return response()->json(['result' => false, 'data' => $data, 'message' => '데이터 등록 실패']);
@@ -252,5 +108,155 @@ class FormController extends Controller
     public function destroy(string $id)
     {
         return 'destroy';
+    }
+
+    private function handleStep1($request, $tableName, $post) {
+        if($post) {
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $data = 
+                DB::table($tableName)
+                ->where('board_id', $request->board_id)
+                ->where('cardinal_id', $request->cardinal_id)
+                ->where('user_id', Auth::user()->id)
+                ->update($record);
+                return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
+            } else {
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $data = DB::table($tableName)->insert($record);
+                return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
+            }
+    }
+
+    private function handleStep2($request, $tableName, $post) {
+        if($post) {
+            $school_info = json_encode($request->input('school_info'));  
+            $language_info = json_encode($request->input('language_info'));  
+            $personal_info = json_encode($request->input('personal_info')); 
+            $technician_info = json_encode($request->input('technician_info'));  
+            $military_info = json_encode($request->input('military_info')); 
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['school_info'] = $school_info;
+            $record['language_info'] = $language_info;
+            $record['personal_info'] = $personal_info;
+            $record['technician_info'] = $technician_info;
+            $record['military_info'] = $$military_info;
+
+            $data = 
+            DB::table($tableName)
+            ->where('board_id', $request->board_id)
+            ->where('cardinal_id', $request->cardinal_id)
+            ->where('user_id', Auth::user()->id)
+            ->update($record);
+            return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
+        } else {
+            
+            $school_info = json_encode($request->input('school_info'));  
+            $language_info = json_encode($request->input('language_info'));  
+            $personal_info = json_encode($request->input('personal_info')); 
+            $technician_info = json_encode($request->input('technician_info'));  
+            $military_info = json_encode($request->input('military_info')); 
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['school_info'] = $school_info;
+            $record['language_info'] = $language_info;
+            $record['personal_info'] = $personal_info;
+            $record['technician_info'] = $technician_info;
+            $record['military_info'] = $military_info;
+
+
+            $data = DB::table($tableName)->insert($record);
+            return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
+        }
+    }
+
+    private function handleStep3($request, $tableName, $post) {
+        if($post) {
+            $church_info = json_encode($request->input('church_info'));  
+            $work_info = json_encode($request->input('work_info'));  
+            $disciple_info = json_encode($request->input('disciple_info')); 
+            $faith_info = json_encode($request->input('faith_info'));  
+            $mission_info = json_encode($request->input('mission_info')); 
+            $dispatch_info = json_encode($request->input('dispatch_info')); 
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['church_info'] = $church_info;
+            $record['work_info'] = $work_info;
+            $record['disciple_info'] = $disciple_info;
+            $record['faith_info'] = $faith_info;
+            $record['mission_info'] = $mission_info;
+            $record['dispatch_info'] = $dispatch_info;
+
+            $data = 
+            DB::table($tableName)
+            ->where('board_id', $request->board_id)
+            ->where('cardinal_id', $request->cardinal_id)
+            ->where('user_id', Auth::user()->id)
+            ->update($record);
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
+        
+        } else {
+            $church_info = json_encode($request->input('church_info'));  
+            $work_info = json_encode($request->input('work_info'));  
+            $disciple_info = json_encode($request->input('disciple_info')); 
+            $faith_info = json_encode($request->input('faith_info'));  
+            $mission_info = json_encode($request->input('mission_info')); 
+            $dispatch_info = json_encode($request->input('dispatch_info')); 
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['church_info'] = $church_info;
+            $record['work_info'] = $work_info;
+            $record['disciple_info'] = $disciple_info;
+            $record['faith_info'] = $faith_info;
+            $record['mission_info'] = $mission_info;
+            $record['dispatch_info'] = $dispatch_info;
+
+            $data = DB::table($tableName)->insert($record);
+            return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
+        }
+    }
+
+    private function handleStep4($request, $tableName, $post) {
+        if($post) {
+            $family_info = json_encode($request->input('family_info'));  
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['family_info'] = $family_info;
+
+            $data = 
+            DB::table($tableName)
+            ->where('board_id', $request->board_id)
+            ->where('cardinal_id', $request->cardinal_id)
+            ->where('user_id', Auth::user()->id)
+            ->update($record);
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
+
+        } else {
+            $family_info = json_encode($request->input('family_info'));  
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            $record['family_info'] = $family_info;
+            $data = DB::table($tableName)->insert($record);
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
+        }
     }
 }
