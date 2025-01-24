@@ -423,4 +423,99 @@ class FormController extends Controller
             return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
         }
     }
+
+    private function handleStep9($request, $tableName, $post) {
+        if($post) {
+            $infoOne = json_encode($request->input('info1'));  
+
+            $record = $request->except('step_id');
+            $record['user_id'] = Auth::user()->id;
+            $record['created_at'] = Carbon::now();
+            if($request->input('info1')) {
+                $infoOne = json_encode($request->input('info1'));  
+                $record['info1'] = $infoOne;
+                $data = 
+                DB::table($tableName)
+                ->where('board_id', $request->board_id)
+                ->where('cardinal_id', $request->cardinal_id)
+                ->where('user_id', Auth::user()->id)
+                ->update($record);
+            } 
+
+            if($request->input('info2')) {
+                $infoTwo = json_encode($request->input('info2'));  
+                $record['info2'] = $infoTwo;
+                $data = 
+                DB::table($tableName)
+                ->where('board_id', $request->board_id)
+                ->where('cardinal_id', $request->cardinal_id)
+                ->where('user_id', Auth::user()->id)
+                ->update($record);
+            } 
+
+            if($request->input('info3')) {
+                $infoThree = json_encode($request->input('info3'));  
+                $record['info3'] = $infoThree;
+                $data = 
+                DB::table($tableName)
+                ->where('board_id', $request->board_id)
+                ->where('cardinal_id', $request->cardinal_id)
+                ->where('user_id', Auth::user()->id)
+                ->update($record);
+            } 
+
+            if($request->input('info4')) {
+                $infoFour = json_encode($request->input('info4'));  
+                $record['info4'] = $infoFour;
+                $data = 
+                DB::table($tableName)
+                ->where('board_id', $request->board_id)
+                ->where('cardinal_id', $request->cardinal_id)
+                ->where('user_id', Auth::user()->id)
+                ->update($record);
+            } 
+        
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
+
+        } else {
+            if($request->input('info1')) {
+                $infoOne = json_encode($request->input('info1'));  
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['info1'] = $infoOne;
+                $data = DB::table($tableName)->insert($record);
+            }
+
+            if($request->input('info2')) {
+                $infoTwo = json_encode($request->input('info2'));  
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['info2'] = $infoTwo;
+                $data = DB::table($tableName)->insert($record);
+            }
+
+            if($request->input('info3')) {
+                $infoThree = json_encode($request->input('info3'));  
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['info3'] = $infoThree;
+                $data = DB::table($tableName)->insert($record);
+            }
+
+            if($request->input('info4')) {
+                $infoFour = json_encode($request->input('info4'));  
+                $record = $request->except('step_id');
+                $record['user_id'] = Auth::user()->id;
+                $record['created_at'] = Carbon::now();
+                $record['info4'] = $infoFour;
+                $data = DB::table($tableName)->insert($record);
+            } 
+
+            return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
+        }
+    }
 }
