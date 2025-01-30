@@ -5,7 +5,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use App\Models\Post;
+use App\Models\Calendar;
 use App\Http\Resources\CalendarCollection;
 use App\Http\Resources\CalendarResource;
 use App\Http\Controllers\Controller;
@@ -26,16 +26,15 @@ class CalendarController extends Controller
     public function index(Request $request)
     {
 
-        $users = QueryBuilder::for(Post::class)
-        ->selectRaw('posts.*') // selectRaw
-        ->where("board", "calendar") //event, message, news, assembly
-        ->where('public', 1)
+        $data = QueryBuilder::for(Calendar::class)
+        ->selectRaw('calendars.*') // selectRaw
+        ->where("board", "calendar") //달력만
         ->when($request->has('category'), function ($query) use ($request) {
             $query->where("category", $request->category); // 카테고리명 
         })
         ->when($request->has('month') && $request->has('year'), function ($query) use ($request) {
-            $query->whereYear('start_at', $request->year)
-                  ->whereMonth('start_at', $request->month);
+            $query->whereYear('start', $request->year)
+                  ->whereMonth('start', $request->month);
         })
         ->allowedFilters([
             "title", //제목 검색
@@ -46,19 +45,19 @@ class CalendarController extends Controller
             }),
         ])
         ->allowedSorts(['id', 'title']);
-        if ($request->pageType == 'main') {
-            $users = $users->get();
-            $users->map(fn($e) => $e->append(['img']));
-            return response( $users);
+        if ($request->pageType == 'grid') {
+            $data = $data->get();
+            $data->map(fn($e) => $e->append(['img']));
+            return response($data);
         }
         
         if ($request->pageType == 'list') {
-            $users = $users
-                ->orderByRaw("CASE WHEN posts.order = 1 THEN 1 ELSE 2 END")
-                ->orderBy('start_at', 'desc') 
+            $data = $data
+                ->orderByRaw("CASE WHEN calendars.order = 1 THEN 1 ELSE 2 END")
+                ->orderBy('start', 'desc') 
                 ->paginate(15);
-            $users->map(fn($e) => $e->append(['img']));
-            return new CalendarCollection($users);
+            $data->map(fn($e) => $e->append(['img']));
+            return new CalendarCollection($data);
         }
     
     }
@@ -70,33 +69,23 @@ class CalendarController extends Controller
     {
 
         $data = $request->validate([
-            'title' => 'required|string',
-            'public' => 'required|boolean',
-            'order' => 'nullable',
-            'update_on' => 'nullable',
+            'user_id' => 'required|string',
             'board' => 'required|string',
-            'bus_content' => 'nullable|string',
-            'safe_content' => 'nullable|string',
-            'category_id' => 'nullable',
-            'content' => 'nullable|string', 
-            'urls' => 'nullable|string', 
-            'start_at' => 'nullable|string',
-            'end_at' => 'nullable|string',
-            'time_at' => 'nullable|string',
+            'order' => 'nullable',
+            'category' => 'nullable',
+            'public' => 'required|string',
+            'title' => 'nullable|string',
+            'background_color' => 'nullable|string',
+            'border_color' => 'nullable',
+            'start' => 'nullable|string', 
+            'end' => 'nullable|string', 
+            'content' => 'nullable|string'
         ]);
 
-
-        $post = Post::create($data);
+        $post = Calendar::create($data);
         
-        if($request->hasFile('notice_photo')){
-            $post->addMedia($request->file('notice_photo'))->toMediaCollection('n_photo', 's3');
-        }
-
-        if ($request->hasFile('files')) {
-            foreach ($request->file('files') as $file) {
-                $post->addMedia($file)
-                     ->toMediaCollection('files', 's3'); // Store in 'files' collection on S3
-            }
+        if($request->hasFile('calendar_photo')){
+            $post->addMedia($request->file('calendar_photo'))->toMediaCollection('c_photo', 's3');
         }
     
         return response()->json([
@@ -111,8 +100,8 @@ class CalendarController extends Controller
     public function show(string $id)
     {
         try {   
-            $data = Post::findOrFail($id);
-            return new CalendarCollection($data);
+            $data = Calendar::findOrFail($id);
+            return new CalendarResource($data);
             
         } catch (ValidationException $e) {
             return response()->json([
@@ -127,7 +116,7 @@ class CalendarController extends Controller
     public function update(Request $request, string $id)
     {
 
-        $post = Post::findOrFail($id);
+        $post = Calendar::findOrFail($id);
         $post->update($request->all());
     
         return response()->json([
@@ -238,7 +227,7 @@ class CalendarController extends Controller
      */
     public function destroy(string $id)
     {
-        $post = Post::findOrFail($id);
+        $post = Calendar::findOrFail($id);
         $post->forceDelete();
         return response()->json([
             'success' => true,
