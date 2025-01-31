@@ -27,7 +27,9 @@ class NoticeController extends Controller
     public function index(Request $request)
     {
         $users = QueryBuilder::for(Post::class)
-        ->where("board", $request->board) //훈련관리:train / 공지관리:notice
+        ->when($request->has('board'), function ($query) use ($request) {
+            $query->where("board", $request->board);  // If 'board' exists, filter by it
+        })  //훈련관리:train / 공지관리:notice
         ->when($request->has('category'), function ($query) use ($request) {
             $query->where("category", $request->category); // 기본값 1: 공지사항
         })

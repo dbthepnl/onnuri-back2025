@@ -5,9 +5,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use App\Models\Form;
-use App\Http\Resources\TrainCollection;
-use App\Http\Resources\GongzimeCollection;
+use App\Models\Post;
+use App\Http\Resources\NoticeCollection;
 use App\Http\Resources\NoticeResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -27,26 +26,41 @@ class TrainController extends Controller
     public function index(Request $request)
     {
         $data = QueryBuilder::for(Post::class)
-        ->where("board", $request->board) //event, message, news, assembly
+        ->where("boards.name_ko", $request->board_name) // event, message, news, assembly
         ->when($request->has('category'), function ($query) use ($request) {
             $query->where("category", $request->category); // 기본값 1: 공지사항
         })
         ->allowedFilters([
-            "title", //제목 검색
-            AllowedFilter::callback('search', function ($query, $value) { //전체 검색
+            "title", // 제목 검색
+            AllowedFilter::callback('search', function ($query, $value) { // 전체 검색
                 $query->where(function ($query) use ($value) {
                     $query->where('title', 'like', "%$value%");
                 });
             }),
         ])
-        ->whereNotIn('category', [22, 23, 24])
-        ->allowedSorts(['id', 'title'])
-        ->orderBy('order', 'desc')
-        ->orderBy('updated_at', 'desc')
+        ->leftJoin('boards', 'boards.id', '=', 'posts.board_id')  // Add the join condition here
+        ->allowedSorts(['posts.id', 'posts.title'])
+        ->orderBy('posts.order', 'desc')
+        ->orderBy('posts.updated_at', 'desc')
         ->paginate(15);
 
-        
-        return new TrainCollection($data);
+        return new NoticeCollection($data);
+
+    }
+
+    public function popups(Request $request) {
+        $data = QueryBuilder::for(Post::class)
+        ->selectRaw('id, public, urls, created_at')
+        ->where("board", "assembly")
+        ->where("category", 24) 
+        ->where('public', 1)
+        ->get();
+        $data->map(function ($e) {
+            $e->setAppends(['img']);
+            return $e;
+        });
+
+        return response()->json($data->makeHidden(['media']));
     }
 
     /**
@@ -54,7 +68,7 @@ class TrainController extends Controller
      */
     public function store(Request $request)
     {
-        $data = '';
+        //
     }
 
     /**
@@ -62,15 +76,24 @@ class TrainController extends Controller
      */
     public function show(string $id)
     {
-        $data = '';
+        try {   
+            $data = Post::findOrFail($id);
+            return new NoticeResource($data);
+            
+        } catch (ValidationException $e) {
+            return response()->json([
+                'message' => '데이터 검증 실패',
+            ]);
+        }
     }
+    
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        $data = '';
+        //
     }
 
     /**
@@ -78,6 +101,6 @@ class TrainController extends Controller
      */
     public function destroy(string $id)
     {
-        $data = '';
+        //
     }
 }

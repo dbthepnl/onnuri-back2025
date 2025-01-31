@@ -26,6 +26,7 @@ Route::apiResource('buses', 'App\Http\Controllers\BusController');
 Route::apiResource('calendars', 'App\Http\Controllers\CalendarController'); 
 Route::apiResource('asks', 'App\Http\Controllers\AskController'); 
 Route::apiResource('categories', 'App\Http\Controllers\CategoryController'); 
+Route::apiResource('trains', 'App\Http\Controllers\TrainController'); 
 Route::get('homes', [HomeController::class, 'index']);
 Route::get('calendars', [HomeController::class, 'calendar']);
 Route::get('gongzimes', [NoticeController::class, 'indexGongzimes']);
