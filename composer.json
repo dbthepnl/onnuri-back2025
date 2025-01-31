@@ -14,7 +14,7 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "spatie/image": "^3.7",
         "spatie/laravel-medialibrary": "^11.11",
-        "spatie/laravel-permission": "^6.10",
+        "spatie/laravel-permission": "^6.12",
         "spatie/laravel-query-builder": "^6.3"
     },
     "require-dev": {

@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\TrainController;
 use App\Http\Controllers\Admin\FormOptionController;
 use App\Http\Controllers\Admin\AskController;
@@ -36,6 +37,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::get('latest-cardinal', [CardinalController::class, 'cardinalList']);
     Route::apiResource('users', UserController::class); //회원관리
     Route::apiResource('trains', TrainController::class); //훈련관리
+    Route::apiResource('roles', RoleController::class); //Role 관리
     Route::get('cardinal-category', [TrainController::class, 'cardinalCategory']);
     Route::get('board-category', [TrainController::class, 'boardCategory']);
     Route::apiResource('notices', NoticeController::class); //소식관리
