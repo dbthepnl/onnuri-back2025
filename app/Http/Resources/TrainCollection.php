@@ -7,13 +7,19 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class TrainCollection extends ResourceCollection
 {
-    /**
-     * Transform the resource collection into an array.
-     *
-     * @return array<int|string, mixed>
-     */
-    public function toArray(Request $request): array
+    public $board; 
+
+    public function __construct($resource, $board)
     {
-        return parent::toArray($request);
+        parent::__construct($resource);
+        $this->board = $board; 
+    }
+
+    public function toArray($request)
+    {
+        return [
+            'data' => $this->collection, 
+            'board' => $this->board, 
+        ];
     }
 }

@@ -6,7 +6,8 @@ use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Models\Post;
-use App\Http\Resources\NoticeCollection;
+use App\Models\Board;
+use App\Http\Resources\TrainCollection;
 use App\Http\Resources\NoticeResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -26,7 +27,8 @@ class TrainController extends Controller
     public function index(Request $request)
     {
         $data = QueryBuilder::for(Post::class)
-        ->where("boards.name_ko", $request->board_name) // event, message, news, assembly
+        ->selectRaw('posts.id, boards.name_ko, posts.board, posts.title, posts.cardinal_check, posts.form_check, posts.updated_at, posts.created_at')
+        ->where("boards.id", $request->board_id) // event, message, news, assembly
         ->when($request->has('category'), function ($query) use ($request) {
             $query->where("category", $request->category); // 기본값 1: 공지사항
         })
@@ -44,7 +46,8 @@ class TrainController extends Controller
         ->orderBy('posts.updated_at', 'desc')
         ->paginate(15);
 
-        return new NoticeCollection($data);
+        $board = Board::where('id', $request->board_id)->first();
+        return new TrainCollection($data, $board);
 
     }
 
