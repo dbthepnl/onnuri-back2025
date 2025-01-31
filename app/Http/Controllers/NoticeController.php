@@ -27,18 +27,9 @@ class NoticeController extends Controller
     public function index(Request $request)
     {
         $users = QueryBuilder::for(Post::class)
-        ->selectRaw('posts.*, categories.name_ko, categories.colorcode') // selectRaw
-        ->where("board", $request->board) //event, message, news, assembly
-        ->where('public', 1)
+        ->where("board", $request->board) //훈련관리:train / 공지관리:notice
         ->when($request->has('category'), function ($query) use ($request) {
-            $query->where("category", $request->category); // 카테고리명 
-        })
-        ->when($request->has('category_id'), function ($query) use ($request) {
-            $query->where("category_id", $request->category_id); // 카테고리명 
-        })
-        ->when($request->has('month') && $request->has('year'), function ($query) use ($request) {
-            $query->whereYear('start_at', $request->year)
-                  ->whereMonth('start_at', $request->month);
+            $query->where("category", $request->category); // 기본값 1: 공지사항
         })
         ->allowedFilters([
             "title", //제목 검색
@@ -49,64 +40,12 @@ class NoticeController extends Controller
             }),
         ])
         ->allowedSorts(['id', 'title'])
-        ->leftJoin('categories', 'posts.category_id', '=', 'categories.id');
-        if ($request->pageType == 'main') {
-            $users = $users->get();
-            $users->map(fn($e) => $e->append(['img']));
-            return response( $users);
-        }
-        
-        if ($request->pageType == 'list') {
-            $users = $users
-                ->orderByRaw("CASE WHEN posts.order = 1 THEN 1 ELSE 2 END")
-                ->orderBy('start_at', 'desc') 
-                ->paginate(15);
-            $users->map(fn($e) => $e->append(['img']));
-            return new NoticeCollection($users);
-        }
-
-    }
-
-    public function indexGongzimes(Request $request)
-    {
-        $users = QueryBuilder::for(Post::class)
-        ->selectRaw('id, order, board, public, title, content, created_at, updated_at')
-        ->where("board", $request->board) //event, message, news, assembly
-        ->when($request->has('category'), function ($query) use ($request) {
-            $query->where("category", $request->category); // 1, 2, 3, 25
-        })
         ->orderBy('order', 'desc')
         ->orderBy('updated_at', 'desc')
         ->paginate(15);
 
-        return response()->json($users->makeHidden(['media']));
-    
-    }
+        return new NoticeCollection($users);
 
-    public function shorts(Request $request) {
-        $data = QueryBuilder::for(Post::class)
-        ->selectRaw('id, public, urls, created_at')
-        ->where("board", "assembly")
-        ->where("category", 22) 
-        ->where('public', 1)
-        ->get();
-        $data->map(function ($e) {
-            $e->setAppends(['img']);
-            return $e;
-        });
-
-        return response()->json($data->makeHidden(['media']));
-    }
-
-    public function videos(Request $request) {
-        $data = QueryBuilder::for(Post::class)
-        ->selectRaw('id, public, urls, created_at')
-        ->where("board", "assembly")
-        ->where("category", 23) 
-        ->where('public', 1)
-        ->get();
-
-        return response()->json($data);
     }
 
     public function popups(Request $request) {
@@ -138,15 +77,10 @@ class NoticeController extends Controller
     public function show(string $id)
     {
         try {   
-            $subCategories = Cache::remember('categories-' . $id , 60 * 60 * 24, function() use ($id) {
-                $data = Post::findOrFail($id);
-                return $data;
-            });
-
-            return new NoticeResource($subCategories);
+            $data = Post::findOrFail($id);
+            return new NoticeResource($data);
             
         } catch (ValidationException $e) {
-            
             return response()->json([
                 'message' => '데이터 검증 실패',
             ]);

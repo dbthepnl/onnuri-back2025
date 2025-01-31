@@ -7,6 +7,7 @@ use App\Http\Controllers\AskController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\TrainController;
 use App\Http\Controllers\NoticeController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -25,6 +26,8 @@ Route::apiResource('buses', 'App\Http\Controllers\BusController');
 Route::apiResource('calendars', 'App\Http\Controllers\CalendarController'); 
 Route::apiResource('asks', 'App\Http\Controllers\AskController'); 
 Route::apiResource('categories', 'App\Http\Controllers\CategoryController'); 
+Route::get('homes', [HomeController::class, 'index']);
+Route::get('calendars', [HomeController::class, 'calendar']);
 Route::get('gongzimes', [NoticeController::class, 'indexGongzimes']);
 Route::get('gongzimes/{id}', [NoticeController::class, 'show']);
 Route::get('shorts', [NoticeController::class, 'shorts']);
