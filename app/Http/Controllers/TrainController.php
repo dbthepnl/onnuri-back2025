@@ -80,8 +80,9 @@ class TrainController extends Controller
     public function show(string $id)
     {
         try {   
-            $data = Post::findOrFail($id);
-            return new NoticeResource($data);
+            $data = Post::where('id', $id)->first();
+            $board = Board::where('id', $data['board_id'])->first();
+            return response()->json(['board' => $board, 'data' => $data]);
             
         } catch (ValidationException $e) {
             return response()->json([
