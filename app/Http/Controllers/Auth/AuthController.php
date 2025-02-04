@@ -92,10 +92,14 @@ class AuthController extends Controller
             $message['email'] = '이메일이 이미 존재합니다.';
         }
 
+         if(User::where('username', $data['username'])->first()) {
+            $message['username'] = '사용자ID가 이미 존재합니다.';
+        } 
+
         if($message) {
             return response()->json([
                 'success' => false,
-                'message' => $data,
+                'message' => $message,
             ], 200);
         }
 
