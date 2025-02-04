@@ -27,7 +27,7 @@ class CalendarController extends Controller
     {
 
         $data = QueryBuilder::for(Calendar::class)
-        ->selectRaw('calendars.*') // selectRaw
+        ->selectRaw('calendars.*, locations.room_name') // selectRaw
         ->where("board", "calendar") //달력만
         ->when($request->has('category'), function ($query) use ($request) {
             $query->where("category", $request->category); // 카테고리명 
@@ -44,6 +44,7 @@ class CalendarController extends Controller
                 });
             }),
         ])
+        ->leftJoin('locations', 'calendars.location_id', '=', 'locations.id') 
         ->allowedSorts(['id', 'title']);
         if ($request->pageType == 'grid') {
             $data = $data->get();
@@ -70,6 +71,7 @@ class CalendarController extends Controller
 
         $data = $request->validate([
             'user_id' => 'required|string',
+            'location_id' => 'nullable',
             'board' => 'required|string',
             'order' => 'nullable',
             'category' => 'nullable',
@@ -100,7 +102,8 @@ class CalendarController extends Controller
     public function show(string $id)
     {
         try {   
-            $data = Calendar::findOrFail($id);
+            $data = Calendar::with('location:id')
+            ->findOrFail($id);
             return new CalendarResource($data);
             
         } catch (ValidationException $e) {

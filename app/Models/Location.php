@@ -13,6 +13,7 @@ class Location extends Model
         'room_type',
         'room_floor',
         'room_number',
+        'location',
         'population',
         'gender',
         'created_at',

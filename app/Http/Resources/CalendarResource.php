@@ -20,7 +20,9 @@ class CalendarResource extends JsonResource
         "board" => $this->board,
         "category_id" => $this->category_id,
         "name_ko" => $this->category_id,
+        "room_name" => $this->room_name, //방 이름
         "colorcode" => $this->category_id,
+        "location_id" => $this->location_id,
         "category" => $this->category,
         'title' => $this->title,
         'content' => $this->content,

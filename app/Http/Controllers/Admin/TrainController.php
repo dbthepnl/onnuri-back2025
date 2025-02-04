@@ -49,7 +49,7 @@ class TrainController extends Controller
         ->orderBy('updated_at', 'desc')
         ->paginate(15);
         
-        return new TrainCollection($data);
+        return new TrainCollection($data, $request->board);
     }
 
     public function boardCategory(Request $request){

@@ -29,6 +29,7 @@ class Calendar extends Authenticatable implements HasMedia
      protected $fillable = [
             'title',
             'board',
+            'location_id',
             'category',
             'content',
             'user_id',
@@ -75,4 +76,9 @@ class Calendar extends Authenticatable implements HasMedia
  
          return null;
      }
+
+public function location()
+{
+    return $this->belongsTo(Location::class); 
+}
 }
