@@ -67,11 +67,10 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-
-        $message = array();
-
+       
+        $message = NULL;
         $data = $request->validate([
-            'username' => 'required|string|max:16|unique:users',
+            'username' => 'required|string|max:16',
             'phone' => 'required|numeric|digits_between:10,11',
             'name' => 'required|max:255',
             'birth' => 'required|numeric|digits:8',
@@ -79,22 +78,26 @@ class AuthController extends Controller
             'address' => 'nullable|max:255',
             'detail_address' => 'nullable|max:255',
             'zip_code' => 'nullable|numeric|digits:5',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255',
             'homepage' => 'nullable|max:255',
             'officers' => 'numeric|nullable',
             'password' => 'required|min:6|confirmed'
         ]);
 
-
-
-
-        if (empty($message)) {
-            return response()->json([
-                'success' => false,
-                'message' => $message,
-            ], 200);
+        if(User::where('phone', $data['phone'])->first()) {
+            $message['phone'] = '연락처 이미 존재합니다';
         }
 
+        if(User::where('email', $data['email'])->first()) {
+            $message['email'] = '이메일이 이미 존재합니다.';
+        }
+
+        if($message) {
+            return response()->json([
+                'success' => false,
+                'message' => $data,
+            ], 200);
+        }
 
         $user = User::create($data);
 
