@@ -26,6 +26,7 @@ class NoticeController extends Controller
      */
     public function index(Request $request)
     {
+        
         $users = QueryBuilder::for(Post::class)
         ->whereNot('board', 'popup')
         ->when($request->has('board'), function ($query) use ($request) {

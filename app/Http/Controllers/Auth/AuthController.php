@@ -56,8 +56,19 @@ class AuthController extends Controller
 
     }
 
+    public function userId(Request $request){
+        $data = User::where('username', $request->username)->first();
+
+        return response()->json([
+            'success' => $data ? false : true,
+            'message' => $data ? '이미 존재합니다' : '사용가능합니다',
+        ], 200);
+    }
+
     public function register(Request $request)
     {
+
+        $message = array();
 
         $data = $request->validate([
             'username' => 'required|string|max:16|unique:users',
@@ -73,6 +84,26 @@ class AuthController extends Controller
             'officers' => 'numeric|nullable',
             'password' => 'required|min:6|confirmed'
         ]);
+
+        if(User::where('email', $data['email'])->first()) {
+            $message['email'] = '이메일이 이미 존재합니다.';
+        }
+
+        if(User::where('username', $data['username'])->first()) {
+            $message['username'] = '아이디가 이미 존재합니다.';
+        }
+
+        if(User::where('phone', $data['phone'])->first()) {
+            $message['phone'] = '연락처가 이미 존재합니다.';
+        }
+
+
+        if (empty($message)) {
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+            ], 200);
+        }
 
         $user = User::create($data);
 
