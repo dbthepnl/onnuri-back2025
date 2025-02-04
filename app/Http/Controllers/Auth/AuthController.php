@@ -71,7 +71,7 @@ class AuthController extends Controller
         $message = array();
 
         $data = $request->validate([
-            'username' => 'required|string|max:16',
+            'username' => 'required|string|max:16|unique:users',
             'phone' => 'required|numeric|digits_between:10,11',
             'name' => 'required|max:255',
             'birth' => 'required|numeric|digits:8',
@@ -79,23 +79,13 @@ class AuthController extends Controller
             'address' => 'nullable|max:255',
             'detail_address' => 'nullable|max:255',
             'zip_code' => 'nullable|numeric|digits:5',
-            'email' => 'required|string|email|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
             'homepage' => 'nullable|max:255',
             'officers' => 'numeric|nullable',
             'password' => 'required|min:6|confirmed'
         ]);
 
-        if(User::where('email', $data['email'])->first()) {
-            $message['email'] = '이메일이 이미 존재합니다.';
-        }
 
-        if(User::where('username', $data['username'])->first()) {
-            $message['username'] = '아이디가 이미 존재합니다.';
-        }
-
-        if(User::where('phone', $data['phone'])->first()) {
-            $message['phone'] = '연락처가 이미 존재합니다.';
-        }
 
 
         if (empty($message)) {
