@@ -26,7 +26,6 @@ class CalendarController extends Controller
     public function index(Request $request)
     {
 
-        return 'sdf';
         $users = QueryBuilder::for(Post::class)
         ->selectRaw('posts.*, categories.name_ko, categories.colorcode') // selectRaw
         ->where("board", "calendar") //event, message, news, assembly
