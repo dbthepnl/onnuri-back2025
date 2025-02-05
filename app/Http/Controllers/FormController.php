@@ -5,6 +5,7 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use App\Models\FormCheck;
 use App\Models\Form;
 use App\Models\Form1;
 use App\Models\Form2;
@@ -112,6 +113,24 @@ class FormController extends Controller
     public function show(string $id)
     {
         return 'show';
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function formCheck(Request $request)
+    {
+        $data = DB::table('form_checks')
+        ->selectRaw('step_id, success')
+        ->where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('step_id', $request->step_id)
+        ->where('form_id', $request->form_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->where('success', $request->success)
+        ->get();
+
+        return response()->json(['result' => true, 'data' => $data, 'message' => '신청서 현황']);
     }
 
     /**

@@ -19,6 +19,7 @@ Route::middleware('auth:sanctum')->group(function() {
     //개인정보, 로그인, 로그아웃 Auth Dir > Login, Register, get/{id}
     Route::apiResource('me', 'App\Http\Controllers\Auth\AuthController'); 
     Route::apiResource('forms', 'App\Http\Controllers\FormController'); 
+    Route::get('form-check', [FormController::class, 'formCheck']);
 });
 
 Route::apiResource('participants', 'App\Http\Controllers\ParticipantController'); 
