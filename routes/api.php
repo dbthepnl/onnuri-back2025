@@ -30,6 +30,7 @@ Route::apiResource('categories', 'App\Http\Controllers\CategoryController');
 Route::apiResource('trains', 'App\Http\Controllers\TrainController'); 
 Route::get('homes', [HomeController::class, 'index']);
 Route::get('calendars', [HomeController::class, 'calendar']);
+Route::get('menus', [HomeController::class, 'menu']);
 Route::get('gongzimes', [NoticeController::class, 'indexGongzimes']);
 Route::get('gongzimes/{id}', [NoticeController::class, 'show']);
 Route::get('shorts', [NoticeController::class, 'shorts']);

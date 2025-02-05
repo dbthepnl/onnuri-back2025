@@ -6,6 +6,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Models\Calendar;
+use App\Models\Board;
 use App\Models\Post;
 use App\Http\Resources\NoticeCollection;
 use App\Http\Resources\CalendarCollection;
@@ -81,6 +82,24 @@ class HomeController extends Controller
         return response()->json([
             'success'=> true,
             'message' => '일정 조회',
+            'data' => $data
+        ]);
+        
+    }
+
+    public function menu(Request $request) {
+
+        $currentDate = Carbon::today();
+
+
+        $data = QueryBuilder::for(Board::class)
+        ->selectRaw('id, name_ko, name_en, information') // selectRaw
+        ->where("name_en", "program") // 달력만
+        ->get();
+
+        return response()->json([
+            'success'=> true,
+            'message' => '메뉴 조회',
             'data' => $data
         ]);
         
