@@ -93,7 +93,7 @@ class HomeController extends Controller
 
 
         $data = QueryBuilder::for(Board::class)
-        ->selectRaw('id, name_ko, name_en, information') // selectRaw
+        ->selectRaw('id, nickname, name_ko, name_en, information') // selectRaw
         ->where("name_en", "program") // 달력만
         ->get();
 
