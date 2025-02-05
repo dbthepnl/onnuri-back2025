@@ -27,6 +27,7 @@ class Board extends Authenticatable implements HasMedia
       protected $fillable = [
         'name_ko',
         'name_en',
+        'nickname',
         'information',
         'created_at',
         'updated_at',
