@@ -67,12 +67,15 @@ class HomeController extends Controller
 
         $currentDate = Carbon::today();
 
+
         $data = QueryBuilder::for(Calendar::class)
         ->selectRaw('calendars.*') // selectRaw
         ->where("board", "calendar") // 달력만
         ->where("category", "1")
-        ->whereYear('start', $currentDate->year)
-        ->whereMonth('start', $currentDate->month)
+        ->when($request->has('month') && $request->has('year'), function ($query) use ($request) {
+            $query->whereYear('start', $request->year)
+                  ->whereMonth('start', $request->month);
+        })
         ->get();
 
         return response()->json([
