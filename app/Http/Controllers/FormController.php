@@ -50,43 +50,43 @@ class FormController extends Controller
         ->get();
         }
         if($request->step_id == 3) {
-        $form3 = Form3::where('user_id', Auth::user()->id)
+            $data = Form3::where('user_id', Auth::user()->id)
         ->where('board_id', $request->board_id)
         ->where('cardinal_id', $request->cardinal_id)
         ->get();
         }
         if($request->step_id == 4) {
-        $form4 = Form4::where('user_id', Auth::user()->id)
+            $data = Form4::where('user_id', Auth::user()->id)
         ->where('board_id', $request->board_id)
         ->where('cardinal_id', $request->cardinal_id)
         ->get();
         }
         if($request->step_id == 5) {
-        $form5 = Form5::where('user_id', Auth::user()->id)
+            $data = Form5::where('user_id', Auth::user()->id)
         ->where('board_id', $request->board_id)
         ->where('cardinal_id', $request->cardinal_id)
         ->get();
         }
         if($request->step_id == 6) {
-        $form6 = Form6::where('user_id', Auth::user()->id)
+            $data = Form6::where('user_id', Auth::user()->id)
         ->where('board_id', $request->board_id)
         ->where('cardinal_id', $request->cardinal_id)
         ->get();
         }
         if($request->step_id == 7) {
-        $form7 = Form7::where('user_id', Auth::user()->id)
+            $data = Form7::where('user_id', Auth::user()->id)
         ->where('board_id', $request->board_id)
         ->where('cardinal_id', $request->cardinal_id)
         ->get();
         }
         if($request->step_id == 8) {
-        $form8 = Form8::where('user_id', Auth::user()->id)
+            $data = Form8::where('user_id', Auth::user()->id)
         ->where('board_id', $request->board_id)
         ->where('cardinal_id', $request->cardinal_id)
         ->get();
         }
         if($request->step_id == 9) {
-        $form9 = Form9::where('user_id', Auth::user()->id)
+            $data = Form9::where('user_id', Auth::user()->id)
         ->where('board_id', $request->board_id)
         ->where('cardinal_id', $request->cardinal_id)
         ->get(); }

@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::get('form_elements', [FormController::class, 'indexElement']);
 
     //신청자 관리
+    
     Route::get('register-list', [FormController::class, 'registerIndex']);
     Route::get('register-show/{id}', [FormController::class, 'registerShow']);
     Route::apiResource('form_options', FormOptionController::class);
