@@ -169,12 +169,14 @@ class FormController extends Controller
     }
 
     private function handleStep2($request, $tableName, $post) {
+
         if($post) {
             $school_info = json_encode($request->input('school_info'));  
             $language_info = json_encode($request->input('language_info'));  
             $personal_info = json_encode($request->input('personal_info')); 
             $technician_info = json_encode($request->input('technician_info'));  
             $military_info = json_encode($request->input('military_info')); 
+
 
             $record = $request->except('step_id');
             $record['user_id'] = Auth::user()->id;
@@ -183,7 +185,7 @@ class FormController extends Controller
             $record['language_info'] = $language_info;
             $record['personal_info'] = $personal_info;
             $record['technician_info'] = $technician_info;
-            $record['military_info'] = $$military_info;
+            $record['military_info'] = $military_info;
 
             $data = 
             DB::table($tableName)
