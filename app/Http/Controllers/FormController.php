@@ -120,14 +120,12 @@ class FormController extends Controller
      */
     public function formCheck(Request $request)
     {
+
         $data = DB::table('form_checks')
         ->selectRaw('step_id, success')
         ->where('user_id', Auth::user()->id)
         ->where('board_id', $request->board_id)
-        ->where('step_id', $request->step_id)
-        ->where('form_id', $request->form_id)
         ->where('cardinal_id', $request->cardinal_id)
-        ->where('success', $request->success)
         ->get();
 
         return response()->json(['result' => true, 'data' => $data, 'message' => '신청서 현황']);
