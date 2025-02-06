@@ -14,6 +14,8 @@ use App\Models\Form4;
 use App\Models\Form5;
 use App\Models\Form6;
 use App\Models\Form7;
+use App\Models\Form8;
+use App\Models\Form9;
 use App\Http\Resources\FormCollection;
 use App\Http\Resources\FormResource;
 use App\Http\Resources\GongzimeCollection;
@@ -35,14 +37,67 @@ class FormController extends Controller
     public function index(Request $request)
     {
 
-        $tableName = $request->step_id ? "form" . $request->step_id . 's' : 'forms';
-        $data = DB::table($tableName)
-        ->where('user_id', Auth::user()->id)
+        if($request->step_id == 1) {
+            $data = Form1::where('user_id', Auth::user()->id)
+            ->where('board_id', $request->board_id)
+            ->where('cardinal_id', $request->cardinal_id)
+            ->get();
+        }
+        if($request->step_id == 2) {
+            $data = Form2::where('user_id', Auth::user()->id)
         ->where('board_id', $request->board_id)
         ->where('cardinal_id', $request->cardinal_id)
         ->get();
+        }
+        if($request->step_id == 3) {
+        $form3 = Form3::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        }
+        if($request->step_id == 4) {
+        $form4 = Form4::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        }
+        if($request->step_id == 5) {
+        $form5 = Form5::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        }
+        if($request->step_id == 6) {
+        $form6 = Form6::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        }
+        if($request->step_id == 7) {
+        $form7 = Form7::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        }
+        if($request->step_id == 8) {
+        $form8 = Form8::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        }
+        if($request->step_id == 9) {
+        $form9 = Form9::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get(); }
 
-        return response()->json(['result' => true, 'data' => $data, 'message' => $request->id ? '데이터 전송' : '데이터 없음']);
+        return response()->json([
+            'result' => true,
+            'step_id' => $request->step_id,
+            'data' => $data,
+            'message' => '조회 완료'
+        ]);
+
     }
 
 
@@ -107,12 +162,97 @@ class FormController extends Controller
         return response()->json(['result' => false, 'data' => $data, 'message' => '데이터 등록 실패']);
     }
 
+    //신청자 관리
+    public function registerShow(Request $request, $id)
+    {
+        $form1 = Form1::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        $form2 = Form2::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        $form3 = Form3::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        $form4 = Form4::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        $form5 = Form5::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        $form6 = Form6::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        $form7 = Form7::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        $form8 = Form8::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+        $form9 = Form9::where('user_id', Auth::user()->id)
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->get();
+
+
+        return response()->json([
+            'result' => true,
+            'data' =>
+            [
+                'form1' => $form1,
+                'form2' => $form2,
+                'form3' => $form3,
+                'form4' => $form4,
+                'form5' => $form5,
+                'form6' => $form6,
+                'form7' => $form7,
+                'form8' => $form8,
+                'form9' => $form9
+            ],
+            'message' => '조회 완료'
+        ]);
+    }
+
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        return 'show';
+        $form1 = Form1::where('user_id', $id)->get();
+        $form2 = Form2::where('user_id', $id)->get();
+        $form3 = Form3::where('user_id', $id)->get();
+        $form4 = Form4::where('user_id', $id)->get();
+        $form5 = Form5::where('user_id', $id)->get();
+        $form6 = Form6::where('user_id', $id)->get();
+        $form7 = Form7::where('user_id', $id)->get();
+        $form8 = Form8::where('user_id', $id)->get();
+        $form9 = Form9::where('user_id', $id)->get();
+
+
+        return response()->json([
+            'result' => true,
+            'data' =>
+            [
+                'form1' => $form1,
+                'form2' => $form2,
+                'form3' => $form3,
+                'form4' => $form4,
+                'form5' => $form5,
+                'form6' => $form6,
+                'form7' => $form7,
+                'form8' => $form8,
+                'form9' => $form9
+            ],
+            'message' => '조회 완료'
+        ]);
     }
 
     /**
