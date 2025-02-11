@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('form_participants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable();
             $table->unsignedInteger('form_id')->default(0);
             $table->unsignedInteger('form_option_id')->default(0);
             $table->string('response')->nullable();

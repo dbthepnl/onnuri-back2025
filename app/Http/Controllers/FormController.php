@@ -281,7 +281,7 @@ class FormController extends Controller
 
         $data = DB::table('form_checks')
         ->selectRaw('step_id, success')
-        ->where('user_id', 9)
+        ->where('user_id', Auth::user()->id)
         ->where('board_id', $request->board_id)
         ->where('cardinal_id', $request->cardinal_id)
         ->get();
@@ -307,9 +307,7 @@ class FormController extends Controller
                 ];
             }
         }
-
         
-
         return response()->json(['result' => true, 'data' => $data, 'message' => '신청서 현황']);
     }
 

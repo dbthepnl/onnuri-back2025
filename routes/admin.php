@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\ParticipantController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BoardController;
 use App\Http\Controllers\Admin\CalendarController;
+use App\Http\Controllers\Admin\ReservationController;
 use App\Http\Controllers\Admin\BusController;
 use App\Http\Controllers\Admin\CardinalController;
 use App\Http\Controllers\Admin\DonationController;
@@ -46,6 +47,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::apiResource('forms', FormController::class); //신청서관리
     Route::apiResource('participants', ParticipantController::class); //참석자관리
     Route::apiResource('calendars', CalendarController::class);
+    Route::apiResource('reservations', ReservationController::class);
     Route::apiResource('locations', LocationController::class);
     Route::apiResource('asks', AskController::class); 
     Route::apiResource('buses', BusController::class);
