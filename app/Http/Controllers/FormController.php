@@ -281,10 +281,36 @@ class FormController extends Controller
 
         $data = DB::table('form_checks')
         ->selectRaw('step_id, success')
-        ->where('user_id', Auth::user()->id)
+        ->where('user_id', 9)
         ->where('board_id', $request->board_id)
         ->where('cardinal_id', $request->cardinal_id)
         ->get();
+
+        $requiredSteps = [1,2,3,4,5,6,7,8,9]; //몇개 step있는지 확인
+
+        foreach ($requiredSteps as $step) {
+
+            $found = false;
+
+            foreach ($data as $key => $entry) {
+                if ($entry->step_id == $step) {
+                    $found = true;
+                    break;
+                }
+            }
+        
+            //step을 못찾는 경우 success는 0
+            if (!$found) {
+                $data[] = [
+                    'step_id' => $step,
+                    'success' => 0
+                ];
+            }
+        }
+
+        return $data;
+        
+        
 
         return response()->json(['result' => true, 'data' => $data, 'message' => '신청서 현황']);
     }
