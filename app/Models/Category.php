@@ -26,10 +26,10 @@ class Category extends Authenticatable implements HasMedia
       * @var list<string>
       */
       protected $fillable = [
-        'board_id'
+        'board_id',
         'name_ko',
         'name_en',
-        'cardinals'
+        'cardinals',
         'created_at',
         'updated_at',
  ];

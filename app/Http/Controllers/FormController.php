@@ -116,50 +116,68 @@ class FormController extends Controller
 
         //STEP 1
         if($request->step_id == 1) {
-            return $this->handleStep1($request, $tableName, $post);
+            $success = $request->success ?? 0;
+            $record = $request->except('success');
+            return $this->handleStep1($request, $tableName, $post, $success);
         }
 
         //STEP 2
         if($request->step_id == 2) {
-            return $this->handleStep2($request, $tableName, $post);            
+            $success = $request->success ?? 0;
+            $record = $request->except('success');
+            return $this->handleStep2($request, $tableName, $post, $success);           
         }
 
         //STEP 3
         if($request->step_id == 3) {
-            return $this->handleStep3($request, $tableName, $post);
+            $success = $request->success ?? 0;
+            $record = $request->except('success');
+            return $this->handleStep3($request, $tableName, $post, $success);
         }
 
         //STEP 4
         if($request->step_id == 4) {
-            return $this->handleStep4($request, $tableName, $post);            
+            $success = $request->success ?? 0;
+            $record = $request->except('success');
+            return $this->handleStep4($request, $tableName, $post, $success);            
         }
 
         //STEP 5
         if($request->step_id == 5) {
-            return $this->handleStep5($request, $tableName, $post);            
+            $success = $request->success ?? 0;
+            $record = $request->except('success');
+            return $this->handleStep5($request, $tableName, $post, $success);          
         }
 
         //STEP 6
         if($request->step_id == 6) {
-            return $this->handleStep6($request, $tableName, $post);            
+            $success = $request->success ?? 0;
+            $record = $request->except('success');
+            return $this->handleStep6($request, $tableName, $post, $success);       
         }
 
         //STEP 7
         if($request->step_id == 7) {
-            return $this->handleStep7($request, $tableName, $post);            
+            $success = $request->success;
+            $record = $request->except('success');
+            return $this->handleStep7($request, $tableName, $post, $success);   
         }
 
         //STEP 8
         if($request->step_id == 8) {
-            return $this->handleStep8($request, $tableName, $post);            
+            $success = $request->success ?? 0;
+            $record = $request->except('success');
+            return $this->handleStep8($request, $tableName, $post, $success);     
         }
 
         //STEP 9
         if($request->step_id == 9) {
-            return $this->handleStep9($request, $tableName, $post);            
+            $success = $request->success;
+            $record = $request->except('success');
+            return $this->handleStep9($request, $tableName, $post, $success);      
         }
 
-        return response()->json(['result' => false, 'data' => $data, 'message' => '데이터 등록 실패']);
+        return response()->json(['result' => false, 'data' => NULL, 'message' => '데이터 등록 실패']);
     }
 
     //신청자 관리
@@ -287,9 +305,11 @@ class FormController extends Controller
         return 'destroy';
     }
 
-    private function handleStep1($request, $tableName, $post) {
+    private function handleStep1($request, $tableName, $post, $success) {
+        
+
         if($post) {
-                $record = $request->except('step_id');
+                $record = $request->except(['step_id', 'success']);
                 $record['user_id'] = Auth::user()->id;
                 $record['created_at'] = Carbon::now();
                 $data = 
@@ -298,17 +318,43 @@ class FormController extends Controller
                 ->where('cardinal_id', $request->cardinal_id)
                 ->where('user_id', Auth::user()->id)
                 ->update($record);
+                
+                FormCheck::updateOrCreate(
+                    [
+                        'user_id' => Auth::user()->id,
+                        'board_id' => $request->board_id,
+                        'cardinal_id' => $request->cardinal_id,
+                        'step_id' => 1,
+                    ],
+                    [
+                        'success' => $success,
+                    ]
+                );
+                
                 return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
             } else {
-                $record = $request->except('step_id');
+                $record = $request->except(['step_id', 'success']);
                 $record['user_id'] = Auth::user()->id;
                 $record['created_at'] = Carbon::now();
                 $data = DB::table($tableName)->insert($record);
+
+                FormCheck::updateOrCreate(
+                    [
+                        'user_id' => Auth::user()->id,
+                        'board_id' => $request->board_id,
+                        'cardinal_id' => $request->cardinal_id,
+                        'step_id' => 1,
+                    ],
+                    [
+                        'success' => $success,
+                    ]
+                );
+
                 return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
             }
     }
 
-    private function handleStep2($request, $tableName, $post) {
+    private function handleStep2($request, $tableName, $post, $success) {
 
         if($post) {
             $school_info = json_encode($request->input('school_info'));  
@@ -318,7 +364,7 @@ class FormController extends Controller
             $military_info = json_encode($request->input('military_info')); 
 
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['school_info'] = $school_info;
@@ -333,6 +379,20 @@ class FormController extends Controller
             ->where('cardinal_id', $request->cardinal_id)
             ->where('user_id', Auth::user()->id)
             ->update($record);
+
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 2,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
+
+
             return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
         } else {
             
@@ -342,7 +402,7 @@ class FormController extends Controller
             $technician_info = json_encode($request->input('technician_info'));  
             $military_info = json_encode($request->input('military_info')); 
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['school_info'] = $school_info;
@@ -353,11 +413,24 @@ class FormController extends Controller
 
 
             $data = DB::table($tableName)->insert($record);
+
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 2,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
+
             return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
         }
     }
 
-    private function handleStep3($request, $tableName, $post) {
+    private function handleStep3($request, $tableName, $post, $success) {
         if($post) {
             $church_info = json_encode($request->input('church_info'));  
             $work_info = json_encode($request->input('work_info'));  
@@ -366,7 +439,7 @@ class FormController extends Controller
             $mission_info = json_encode($request->input('mission_info')); 
             $dispatch_info = json_encode($request->input('dispatch_info')); 
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['church_info'] = $church_info;
@@ -382,6 +455,18 @@ class FormController extends Controller
             ->where('cardinal_id', $request->cardinal_id)
             ->where('user_id', Auth::user()->id)
             ->update($record);
+
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 3,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
 
             return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
         
@@ -393,7 +478,7 @@ class FormController extends Controller
             $mission_info = json_encode($request->input('mission_info')); 
             $dispatch_info = json_encode($request->input('dispatch_info')); 
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['church_info'] = $church_info;
@@ -404,15 +489,29 @@ class FormController extends Controller
             $record['dispatch_info'] = $dispatch_info;
 
             $data = DB::table($tableName)->insert($record);
+
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 3,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
+
+
             return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
         }
     }
 
-    private function handleStep4($request, $tableName, $post) {
+    private function handleStep4($request, $tableName, $post, $success) {
         if($post) {
             $family_info = json_encode($request->input('family_info'));  
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['family_info'] = $family_info;
@@ -424,27 +523,51 @@ class FormController extends Controller
             ->where('user_id', Auth::user()->id)
             ->update($record);
 
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 4,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
+
             return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
 
         } else {
             $family_info = json_encode($request->input('family_info'));  
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['family_info'] = $family_info;
             $data = DB::table($tableName)->insert($record);
+
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 4,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
 
             return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
         }
     }
 
 
-    private function handleStep5($request, $tableName, $post) {
+    private function handleStep5($request, $tableName, $post, $success) {
         if($post) {
             $health_info = json_encode($request->input('health_info'));  
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['health_info'] = $health_info;
@@ -456,22 +579,46 @@ class FormController extends Controller
             ->where('user_id', Auth::user()->id)
             ->update($record);
 
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 5,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
+
             return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
 
         } else {
             $health_info = json_encode($request->input('health_info'));  
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['health_info'] = $health_info;
             $data = DB::table($tableName)->insert($record);
 
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 5,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
+
             return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
         }
     }
 
-    private function handleStep6($request, $tableName, $post) {
+    private function handleStep6($request, $tableName, $post, $success) {
         if($post) {
             $recommend_info1 = json_encode($request->input('recommend_info1'));  
             $recommend_info2 = json_encode($request->input('recommend_info2'));  
@@ -479,7 +626,7 @@ class FormController extends Controller
             $recommend_info4 = json_encode($request->input('recommend_info4'));  
             $recommend_info5 = json_encode($request->input('recommend_info5'));  
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['recommend_info1'] = $recommend_info1;
@@ -496,6 +643,18 @@ class FormController extends Controller
             ->where('user_id', Auth::user()->id)
             ->update($record);
 
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 6,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
+
             return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
 
         } else {
@@ -505,7 +664,7 @@ class FormController extends Controller
             $recommend_info4 = json_encode($request->input('recommend_info4'));  
             $recommend_info5 = json_encode($request->input('recommend_info5'));  
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['recommend_info1'] = $recommend_info1;
@@ -515,15 +674,27 @@ class FormController extends Controller
             $record['recommend_info5'] = $recommend_info5;
             $data = DB::table($tableName)->insert($record);
 
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 6,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
+
             return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
         }
     }
 
-    private function handleStep7($request, $tableName, $post) {
+    private function handleStep7($request, $tableName, $post, $success) {
         if($post) {
             $testimony_info = json_encode($request->input('testimony_info'));  
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['testimony_info'] = $testimony_info;
@@ -536,26 +707,50 @@ class FormController extends Controller
             ->where('user_id', Auth::user()->id)
             ->update($record);
 
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 7,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
+
             return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
 
         } else {
             $testimony_info = json_encode($request->input('testimony_info'));  
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['testimony_info'] = $testimony_info;
             $data = DB::table($tableName)->insert($record);
 
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 7,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
+
             return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
         }
     }
 
-    private function handleStep8($request, $tableName, $post) {
+    private function handleStep8($request, $tableName, $post, $success) {
         if($post) {
             $vision_info = json_encode($request->input('vision_info'));  
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['vision_info'] = $vision_info;
@@ -568,26 +763,50 @@ class FormController extends Controller
             ->where('user_id', Auth::user()->id)
             ->update($record);
 
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 8,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
+
             return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
 
         } else {
             $vision_info = json_encode($request->input('vision_info'));  
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             $record['vision_info'] = $vision_info;
             $data = DB::table($tableName)->insert($record);
 
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 8,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
+
             return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
         }
     }
 
-    private function handleStep9($request, $tableName, $post) {
+    private function handleStep9($request, $tableName, $post, $success) {
         if($post) {
             $infoOne = json_encode($request->input('info1'));  
 
-            $record = $request->except('step_id');
+            $record = $request->except(['step_id', 'success']);
             $record['user_id'] = Auth::user()->id;
             $record['created_at'] = Carbon::now();
             if($request->input('info1')) {
@@ -666,14 +885,25 @@ class FormController extends Controller
                 ->where('user_id', Auth::user()->id)
                 ->update($record);
             } 
-        
+
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 9,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
 
             return response()->json(['result' => true, 'data' => $data, 'message' => '수정 완료']);
 
         } else {
             if($request->input('info1')) {
                 $infoOne = json_encode($request->input('info1'));  
-                $record = $request->except('step_id');
+                $record = $request->except(['step_id', 'success']);
                 $record['user_id'] = Auth::user()->id;
                 $record['created_at'] = Carbon::now();
                 $record['info1'] = $infoOne;
@@ -682,7 +912,7 @@ class FormController extends Controller
 
             if($request->input('info2')) {
                 $infoTwo = json_encode($request->input('info2'));  
-                $record = $request->except('step_id');
+                $record = $request->except(['step_id', 'success']);
                 $record['user_id'] = Auth::user()->id;
                 $record['created_at'] = Carbon::now();
                 $record['info2'] = $infoTwo;
@@ -700,7 +930,7 @@ class FormController extends Controller
 
             if($request->input('info4')) {
                 $infoFour = json_encode($request->input('info4'));  
-                $record = $request->except('step_id');
+                $record = $request->except(['step_id', 'success']);
                 $record['user_id'] = Auth::user()->id;
                 $record['created_at'] = Carbon::now();
                 $record['info4'] = $infoFour;
@@ -709,7 +939,7 @@ class FormController extends Controller
 
             if($request->input('info5')) {
                 $infoFive = json_encode($request->input('info5'));  
-                $record = $request->except('step_id');
+                $record = $request->except(['step_id', 'success']);
                 $record['user_id'] = Auth::user()->id;
                 $record['created_at'] = Carbon::now();
                 $record['info5'] = $infoFive;
@@ -718,7 +948,7 @@ class FormController extends Controller
 
             if($request->input('info6')) {
                 $infoSix = json_encode($request->input('info6'));  
-                $record = $request->except('step_id');
+                $record = $request->except(['step_id', 'success']);
                 $record['user_id'] = Auth::user()->id;
                 $record['created_at'] = Carbon::now();
                 $record['info6'] = $infoSix;
@@ -727,12 +957,24 @@ class FormController extends Controller
 
             if($request->input('info7')) {
                 $infoSeven = json_encode($request->input('info7'));  
-                $record = $request->except('step_id');
+                $record = $request->except(['step_id', 'success']);
                 $record['user_id'] = Auth::user()->id;
                 $record['created_at'] = Carbon::now();
                 $record['info7'] = $infoSeven;
                 $data = DB::table($tableName)->insert($record);
             } 
+
+            FormCheck::updateOrCreate(
+                [
+                    'user_id' => Auth::user()->id,
+                    'board_id' => $request->board_id,
+                    'cardinal_id' => $request->cardinal_id,
+                    'step_id' => 9,
+                ],
+                [
+                    'success' => $success,
+                ]
+            );
 
             return response()->json(['result' => true, 'data' => $data, 'message' => '등록 완료']);
         }
