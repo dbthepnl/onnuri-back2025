@@ -308,8 +308,6 @@ class FormController extends Controller
             }
         }
 
-        return $data;
-        
         
 
         return response()->json(['result' => true, 'data' => $data, 'message' => '신청서 현황']);
