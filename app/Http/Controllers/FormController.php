@@ -288,23 +288,31 @@ class FormController extends Controller
 
         $requiredSteps = [1,2,3,4,5,6,7,8,9]; //몇개 step있는지 확인
 
-        foreach ($requiredSteps as $step) {
 
-            $found = false;
-
-            foreach ($data as $key => $entry) {
-                if ($entry->step_id == $step) {
-                    $found = true;
-                    break;
-                }
-            }
-        
-            //step을 못찾는 경우 success는 0
-            if (!$found) {
-                $data[] = [
+        if ($data->isEmpty()) {
+            foreach ($requiredSteps as $step) {
+                $data->push((object)[
                     'step_id' => $step,
                     'success' => 0
-                ];
+                ]);
+            }
+        } else {
+            foreach ($requiredSteps as $step) {
+                $found = false;
+    
+                foreach ($data as $entry) {
+                    if ($entry->step_id == $step) {
+                        $found = true;
+                        break;
+                    }
+                }
+    
+                if (!$found) {
+                    $data->push((object)[
+                        'step_id' => $step,
+                        'success' => 0
+                    ]);
+                }
             }
         }
         
