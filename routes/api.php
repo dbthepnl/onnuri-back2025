@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::apiResource('forms', 'App\Http\Controllers\FormController'); 
     Route::get('form-check', [FormController::class, 'formCheck']);
+    Route::post('me/profile', [AuthController::class, 'profile']);
 });
 
 Route::apiResource('participants', 'App\Http\Controllers\ParticipantController'); 
