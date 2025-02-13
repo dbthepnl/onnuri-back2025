@@ -286,6 +286,11 @@ class FormController extends Controller
         ->where('cardinal_id', $request->cardinal_id)
         ->get();
 
+        $exist = DB::table('form_checks')
+        ->where('board_id', $request->board_id)
+        ->where('cardinal_id', $request->cardinal_id)
+        ->first();
+
         $requiredSteps = [1,2,3,4,5,6,7,8,9]; //몇개 step있는지 확인
 
 
@@ -316,7 +321,7 @@ class FormController extends Controller
             }
         }
         
-        return response()->json(['result' => true, 'data' => $data, 'message' => '신청서 현황']);
+        return response()->json(['result' => $exist ? true : false, 'data' => $data, 'message' => '신청서 현황']);
     }
 
     /**
