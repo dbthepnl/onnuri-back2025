@@ -58,6 +58,37 @@ class AuthController extends Controller
 
     }
 
+    public function profile(Request $request) {
+
+        $user = User::findOrFail(Auth::user()->id);
+
+        //이미지 삭제한 경우
+        if($request->has('my_profile_photo') && $request->status == 'delete'){
+            $user->clearMediaCollection('my_profile_photo');
+        }
+        //이미지 업데이트한 경우
+        if($request->hasFile('my_profile_photo') && $request->status == 'update'){
+            $user->clearMediaCollection('my_profile_photo');
+            $user->addMedia($request->file('my_profile_photo'))->toMediaCollection('my_profile_photo', 's3');
+        }
+
+        //이미지 추가한 경우
+        if($request->hasFile('my_profile_photo') && $request->status == 'add'){
+            $user->addMedia($request->file('my_profile_photo'))->toMediaCollection('my_profile_photo', 's3');
+        }
+
+        //이미지 기존걸 유지한 경우
+        if(!$request->hasFile('my_profile_photo') && $request->status == 'keep'){
+            $user->clearMediaCollection('my_profile_photo');
+        }
+
+
+        return response()->json([
+            'success' => true,
+            'message' => '수정 완료'
+        ], 200);
+    }
+
     public function logout(Request $request)
     {
 
@@ -67,7 +98,6 @@ class AuthController extends Controller
         auth()->guard('web')->logout();
         session()->invalidate();
         session()->regenerateToken();
-
 
         return response()->json([
             'success' => true,
