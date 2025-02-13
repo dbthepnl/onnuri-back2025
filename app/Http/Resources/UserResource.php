@@ -30,7 +30,14 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'homepage' => $this->homepage,
             'officers' => $this->officers,
-            'my_profile_photo' => $this->img
+            'my_profile_photo' => $this->getMedia('my_profile_photo')->map(function ($media) {
+                return [
+                    'id' => $media->id,
+                    'url' => $media->getUrl(),
+                    'name' => $media->file_name,
+                    'size' => $media->size,
+                ];
+            }),
         ];
     }
 }

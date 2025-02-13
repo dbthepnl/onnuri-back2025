@@ -17,6 +17,7 @@ class AuthController extends Controller
      */
     public function index()
     {
+
         return new UserResource(Auth::user());
     }
 
