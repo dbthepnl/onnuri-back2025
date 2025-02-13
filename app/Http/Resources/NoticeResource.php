@@ -20,6 +20,7 @@ class NoticeResource extends JsonResource
         "urls" => $this->urls,
         "form_id" => $this->form_id,
         "form_check" => $this->form_check,
+        "board_id" => $this->board_id,
         "cardinal_id" => $this->cardinal_id,
         "cardinal_check" => $this->cardinal_check,
         "order" => $this->order,
