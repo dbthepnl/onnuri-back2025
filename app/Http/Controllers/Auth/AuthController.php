@@ -19,6 +19,7 @@ class AuthController extends Controller
     {
         return new UserResource(Auth::user());
     }
+
     public function login(Request $request)
     {
         $data = $request->validate([
@@ -55,6 +56,19 @@ class AuthController extends Controller
         ], 200);
 
     }
+
+    public function logout(Request $request)
+    {
+        Auth::user()->tokens->each(function ($token) {
+            $token->delete();
+        });
+    
+        return response()->json([
+            'success' => true,
+            'message' => '로그아웃 성공'
+        ], 200);
+    }
+    
 
     public function userId(Request $request){
         $data = User::where('username', $request->username)->first();

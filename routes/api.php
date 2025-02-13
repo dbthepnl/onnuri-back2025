@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/user-id', [AuthController::class, 'userId']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout']);
 
 //보안을 위해 미들웨어 추가
 Route::middleware('auth:sanctum')->group(function() {

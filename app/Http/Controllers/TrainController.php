@@ -27,7 +27,7 @@ class TrainController extends Controller
     public function index(Request $request)
     {
         $data = QueryBuilder::for(Post::class)
-        ->selectRaw('posts.id, boards.name_ko, posts.board, posts.title, posts.cardinal_check, posts.form_check, posts.updated_at, posts.created_at')
+        ->selectRaw('posts.id, boards.name_ko, posts.board_id, posts.cardinal_id, posts.board, posts.title, posts.cardinal_check, posts.form_check, posts.updated_at, posts.created_at')
         ->where("boards.id", $request->board_id) // event, message, news, assembly
         ->when($request->has('category'), function ($query) use ($request) {
             $query->where("category", $request->category); // 기본값 1: 공지사항
