@@ -87,7 +87,7 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-       
+   
         $message = NULL;
         $data = $request->validate([
             'username' => 'required|string|max:16',
@@ -124,6 +124,10 @@ class AuthController extends Controller
         }
 
         $user = User::create($data);
+
+        if($request->hasFile('my_profile_photo')){
+            $user->addMedia($request->file('my_profile_photo'))->toMediaCollection('my_profile_photo', 's3');
+        }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
