@@ -102,7 +102,8 @@ class NoticeController extends Controller
                 $before = Post::selectRaw('id, title')->where('id', '<',$id)->where('board', $request->board)->orderBy('id', 'desc')->first();
                 $after = Post::selectRaw('id, title')->where('id', '>', $id)->where('board', $request->board)->orderBy('id', 'asc')->first();
 
-                return response()->json(['data' => $data, 'before' => $before ?? NULL, 'after' => $after ?? NULL]);
+                $data['before'] = $before;
+                $data['after'] = $after;
                 return new NoticeResource($data);
             } else {
                 return response()->json(['data' => NULL ]);

@@ -39,6 +39,8 @@ class NoticeResource extends JsonResource
         'time_at' => $this->time_at,
         'created_at' => $this->created_at,
         'updated_at' => $this->updated_at,
+        'before' => $this->before,
+        'after' => $this->after,
         'files' => $this->getMedia('files')->map(function ($media) {
                 return [
                     'id' => $media->id,
