@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\FormCheck;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -183,7 +184,16 @@ class AuthController extends Controller
      */
     public function show(string $id)
     {
-        //
+
+    }
+
+    public function history(Request $request) {
+        $formChecks = FormCheck::leftJoin('cardinals', 'form_checks.cardinal_id', '=', 'cardinals.id')
+        ->where('form_checks.user_id', Auth::user()->id)
+        ->selectRaw('cardinals.title, form_checks.board_id, form_checks.cardinal_id, form_checks.step_id, form_checks.success')
+        ->orderBy('form_checks.created_at', 'desc')
+        ->get();
+        return $formChecks;
     }
 
     /**
@@ -192,16 +202,18 @@ class AuthController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail(Auth::user()->id);
+        $record = NULL;
        if($user['email'] == $request->email) {
         $record = $request->except('email');
         $user->update($record);
+
        } else {
             $user->update($request->all());
        }
     
     return response()->json([
         'success' => true,
-        'message' => '업데이트 완료'
+        'message' => $record ? '이메일 중복' : '업데이트 완료'
     ], 200);
     }
 

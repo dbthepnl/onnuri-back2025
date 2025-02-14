@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->group(function() {
     Route::apiResource('forms', 'App\Http\Controllers\FormController'); 
     Route::get('form-check', [FormController::class, 'formCheck']);
     Route::post('me/profile', [AuthController::class, 'profile']);
+    Route::get('history', [AuthController::class, 'history']);
 });
 
 Route::apiResource('participants', 'App\Http\Controllers\ParticipantController'); 
