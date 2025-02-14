@@ -121,6 +121,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
    
+
         $message = NULL;
         $data = $request->validate([
             'username' => 'required|string|max:16',
