@@ -67,6 +67,21 @@ class NoticeController extends Controller
         return response()->json($data->makeHidden(['media']));
     }
 
+    public function sliders(Request $request) {
+
+        $data = QueryBuilder::for(Post::class)
+        ->selectRaw('id, public, urls, created_at')
+        ->where("board", "slider")
+        ->where('public', 1)
+        ->get();
+        $data->map(function ($e) {
+            $e->setAppends(['img']);
+            return $e;
+        });
+
+        return response()->json($data->makeHidden(['media']));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
