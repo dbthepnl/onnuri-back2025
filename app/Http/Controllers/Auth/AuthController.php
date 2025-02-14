@@ -191,13 +191,29 @@ class AuthController extends Controller
     public function history(Request $request) {
         $formChecks = FormCheck::leftJoin('cardinals', 'form_checks.cardinal_id', '=', 'cardinals.id')
         ->where('form_checks.user_id', Auth::user()->id)
-        ->selectRaw('form_checks.board_id, form_checks.cardinal_id, MAX(form_checks.step_id) as max_step_id, cardinals.title, form_checks.success')
-        ->groupBy('form_checks.board_id', 'form_checks.cardinal_id')
-        ->orderBy('form_checks.board_id', 'asc')
+        ->selectRaw('
+            form_checks.board_id, 
+            form_checks.cardinal_id, 
+            MAX(form_checks.step_id) as max_step_id, 
+            cardinals.title, 
+            MAX(form_checks.success) as success' 
+        )
+        ->groupBy('form_checks.board_id', 'form_checks.cardinal_id', 'cardinals.title') 
+        ->orderBy('form_checks.board_id', 'asc') 
         ->get();
     
     return $formChecks;
     
+    
+    }
+
+    public function passwordReset(Request $request) {
+
+        $data = $request->validate([
+            'password' => 'required|min:6|confirmed'
+        ]);
+
+        return $data;
     }
 
     /**
