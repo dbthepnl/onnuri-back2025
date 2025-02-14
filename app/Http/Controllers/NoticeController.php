@@ -98,6 +98,11 @@ class NoticeController extends Controller
         try {   
             if($request->board) {
                 $data = Post::where('id', $id)->where('board', $request->board)->first();
+
+                $before = Post::selectRaw('id, title')->where('id', '<',$id)->where('board', $request->board)->orderBy('id', 'desc')->first();
+                $after = Post::selectRaw('id, title')->where('id', '>', $id)->where('board', $request->board)->orderBy('id', 'asc')->first();
+
+                return response()->json(['data' => $data, 'before' => $before ?? NULL, 'after' => $after ?? NULL]);
                 return new NoticeResource($data);
             } else {
                 return response()->json(['data' => NULL ]);
