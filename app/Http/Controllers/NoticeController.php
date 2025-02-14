@@ -28,7 +28,7 @@ class NoticeController extends Controller
     {
         
         $users = QueryBuilder::for(Post::class)
-        ->whereNot('board', 'popup')
+        ->whereNotIn('board', ['popup', 'slider'])
         ->when($request->has('board'), function ($query) use ($request) {
             $query->where("board", $request->board);  // If 'board' exists, filter by it
         })  //훈련관리:train / 공지관리:notice
