@@ -93,11 +93,16 @@ class NoticeController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         try {   
-            $data = Post::findOrFail($id);
-            return new NoticeResource($data);
+            if($request->board) {
+                $data = Post::where('id', $id)->where('board', $request->board)->first();
+                return new NoticeResource($data);
+            } else {
+                return response()->json(['data' => NULL ]);
+            }
+
             
         } catch (ValidationException $e) {
             return response()->json([

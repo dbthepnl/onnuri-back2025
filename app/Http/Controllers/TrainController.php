@@ -77,9 +77,10 @@ class TrainController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         try {   
+
             $data = Post::where('id', $id)->first();
             $board = Board::where('id', $data['board_id'])->first();
             return response()->json(['board' => $board, 'data' => $data]);
