@@ -26,6 +26,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::get('shorts', [NoticeController::class, 'indexShorts']);
     Route::get('videos', [NoticeController::class, 'indexVideos']);
     Route::get('popups', [NoticeController::class, 'indexPopups']);
+    Route::get('sliders', [NoticeController::class, 'indexSliders']);
     Route::get('gongzimes', [NoticeController::class, 'indexGongzimes']);
     Route::get('form_elements', [FormController::class, 'indexElement']);
 

@@ -286,9 +286,9 @@ class FormController extends Controller
         ->where('cardinal_id', $request->cardinal_id)
         ->get();
 
-        $exist = DB::table('form_checks')
+        $exist = DB::table('cardinals')
         ->where('board_id', $request->board_id)
-        ->where('cardinal_id', $request->cardinal_id)
+        ->where('cardinal_number', $request->cardinal_number)
         ->first();
 
         $requiredSteps = [1,2,3,4,5,6,7,8,9]; //몇개 step있는지 확인

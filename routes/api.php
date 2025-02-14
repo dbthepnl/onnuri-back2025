@@ -41,6 +41,7 @@ Route::get('gongzimes/{id}', [NoticeController::class, 'show']);
 Route::get('shorts', [NoticeController::class, 'shorts']);
 Route::get('videos', [NoticeController::class, 'videos']);
 Route::get('popups', [NoticeController::class, 'popups']);
+Route::get('sliders', [NoticeController::class, 'sliders']);
 
 Route::apiResource('donations', 'App\Http\Controllers\DonationController'); 
 
