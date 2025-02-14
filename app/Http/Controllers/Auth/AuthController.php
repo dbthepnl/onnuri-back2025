@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Cardinal;
 use App\Models\FormCheck;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
@@ -190,10 +191,13 @@ class AuthController extends Controller
     public function history(Request $request) {
         $formChecks = FormCheck::leftJoin('cardinals', 'form_checks.cardinal_id', '=', 'cardinals.id')
         ->where('form_checks.user_id', Auth::user()->id)
-        ->selectRaw('cardinals.title, form_checks.board_id, form_checks.cardinal_id, form_checks.step_id, form_checks.success')
-        ->orderBy('form_checks.created_at', 'desc')
+        ->selectRaw('form_checks.board_id, form_checks.cardinal_id, MAX(form_checks.step_id) as max_step_id, cardinals.title, form_checks.success')
+        ->groupBy('form_checks.board_id', 'form_checks.cardinal_id')
+        ->orderBy('form_checks.board_id', 'asc')
         ->get();
-        return $formChecks;
+    
+    return $formChecks;
+    
     }
 
     /**
@@ -213,7 +217,7 @@ class AuthController extends Controller
     
     return response()->json([
         'success' => true,
-        'message' => $record ? '이메일 중복' : '업데이트 완료'
+        'message' => '업데이트 완료'
     ], 200);
     }
 
