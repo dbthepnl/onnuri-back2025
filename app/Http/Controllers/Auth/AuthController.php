@@ -261,7 +261,7 @@ class AuthController extends Controller
             $message['phone'] = '연락처 이미 존재합니다';
         }
 
-        if(User::where('email', $data['email'])->first()) {
+        if(User::where('email', $data['email'])->first()) { 
             $message['email'] = '이메일이 이미 존재합니다.';
         }
 
@@ -345,15 +345,11 @@ class AuthController extends Controller
 
     public function passwordResetToken(Request $request) {
 
-        $data = $request->validate([
-            'password' => 'required|min:6|confirmed',
-            'token' => 'nullable'
-        ]);
 
-        $reset = PassswordReset::where('token', $data['token'])->first();
+        $reset = PasswordReset::where('token', $request->token)->first();
 
         if($reset) {
-            $password = Hash::make($data['password']);
+            $password = Hash::make($request->password);
             User::where('email', $reset['email'])->update([
                 'password' => $password
             ]);
@@ -361,6 +357,11 @@ class AuthController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => '비밀번호 변경 완료',
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => '에러',
             ], 200);
         }
     }
