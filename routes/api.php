@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::get('/user-id', [AuthController::class, 'userId']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('forget-password', [AuthController::class,'forgetPassword']);
+Route::get('reset-password',[AuthController::class, 'resetPasswordLoad']);
+Route::post('reset-password',[AuthController::class, 'resetPassword']);
+Route::post('email-verify', [AuthController::class,'emailVerify']);
+Route::post('password-reset-token', [AuthController::class,'passwordResetToken']);
 
 //보안을 위해 미들웨어 추가
 Route::middleware('auth:sanctum')->group(function() {
