@@ -204,7 +204,6 @@ class AuthController extends Controller
     
     return $formChecks;
     
-    
     }
 
     public function passwordReset(Request $request) {
@@ -213,7 +212,15 @@ class AuthController extends Controller
             'password' => 'required|min:6|confirmed'
         ]);
 
-        return $data;
+
+        $password = Hash::make($data['password']);
+        User::where('id', Auth::user()->id)->update([
+            'password' => $password
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => '비밀번호 변경 완료',
+        ], 200);
     }
 
     /**
