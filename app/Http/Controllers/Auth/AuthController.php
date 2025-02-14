@@ -191,7 +191,18 @@ class AuthController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail(Auth::user()->id);
+       if($user['email'] == $request->email) {
+        $record = $request->except('email');
+        $user->update($record);
+       } else {
+            $user->update($request->all());
+       }
+    
+    return response()->json([
+        'success' => true,
+        'message' => '업데이트 완료'
+    ], 200);
     }
 
     /**
