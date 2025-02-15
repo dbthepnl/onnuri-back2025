@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\PostController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\TrainController;
 use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Admin\InfoController;
+use App\Http\Controllers\Admin\QnaController;
 use App\Http\Controllers\Admin\FormOptionController;
 use App\Http\Controllers\Admin\AskController;
 use App\Http\Controllers\Admin\FormController;
@@ -37,6 +39,8 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::apiResource('form_options', FormOptionController::class);
     Route::apiResource('boards', BoardController::class);
     Route::apiResource('posts', PostController::class);
+    Route::apiResource('infos', InfoController::class);
+    Route::apiResource('qnas', QnaController::class);
     Route::apiResource('cardinals', CardinalController::class);
     Route::get('latest-cardinal', [CardinalController::class, 'cardinalList']);
     Route::apiResource('users', UserController::class); //회원관리
