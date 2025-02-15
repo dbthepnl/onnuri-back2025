@@ -96,26 +96,40 @@ class ReservationController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $post = Calendar::findOrFail($id);
-        $post->update($request->all());
-    
-        return response()->json([
-            'success' => true,
-            'message' => '업데이트 완료'
-        ], 200);
-    }
+        $data = $request->validate([
+            'public' => 'nullable|boolean',
+            'reservation_type' => 'nullable|boolean',
+            'name' => 'string',
+            'home_phone' => 'string',
+            'phone' => 'string',
+            'email' => 'string',
+            'password' => 'string',
+            'church' => 'string',
+            'church_phone' => 'string',
+            'pastor_name' => 'string',
+            'church_address' => 'string',
+            'organization' => 'string',
+            'leader' => 'string',
+            'event_name' => 'string',
+            'office_phone' => 'string',
+            'address' => 'string',
+            'room_worship_type' => 'nullable|boolean',
+            'room_reservation' => 'nullable',
+            'worship_reservation' => 'nullable',
+            'cafeteria_reservation' => 'nullable'
+        ]);
 
-    public function updatePost(Request $request, string $id)
-    {
-        $post = Post::findOrFail($id);
-        $post->update($request->all());
-    
-        return response()->json([
-            'success' => true,
-            'message' => '업데이트 완료'
-        ], 200);
+        $data['room_reservation'] = json_encode($request->input('room_reservation'));  
+        $data['worship_reservation'] = json_encode($request->input('worship_reservation'));  
+        $data['cafeteria_reservation'] = json_encode($request->input('cafeteria_reservation'));  
+  
+       $data = Reservation::where('id', $id)->update($data);
+       
+       return response()->json([
+        'success' => true,
+        'message' => '수정 완료'
+    ], 200);
     }
-
 
     /**
      * Remove the specified resource from storage.
