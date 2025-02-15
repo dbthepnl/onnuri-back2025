@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Models\Reservation;
 use App\Http\Resources\ReservationCollection;
-use App\Http\Resources\CalendarResource;
+use App\Http\Resources\ReservationResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -39,25 +39,35 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'reservation_type' => 'required|string',
-            'name' => 'nullable',
-            'board' => 'required|string',
-            'order' => 'nullable',
-            'category' => 'nullable',
-            'public' => 'required|string',
-            'title' => 'nullable|string',
-            'background_color' => 'nullable|string',
-            'border_color' => 'nullable',
-            'start' => 'nullable|string', 
-            'end' => 'nullable|string', 
-            'content' => 'nullable|string'
+            'public' => 'nullable|boolean',
+            'reservation_type' => 'nullable|boolean',
+            'name' => 'string',
+            'home_phone' => 'string',
+            'phone' => 'string',
+            'email' => 'string',
+            'password' => 'string',
+            'church' => 'string',
+            'church_phone' => 'string',
+            'pastor_name' => 'string',
+            'church_address' => 'string',
+            'organization' => 'string',
+            'leader' => 'string',
+            'event_name' => 'string',
+            'office_phone' => 'string',
+            'address' => 'string',
+            'room_worship_type' => 'nullable|boolean',
+            'room_reservation' => 'nullable',
+            'worship_reservation' => 'nullable',
+            'cafeteria_reservation' => 'nullable'
         ]);
 
-        $post = Calendar::create($data);
-        
-        if($request->hasFile('calendar_photo')){
-            $post->addMedia($request->file('calendar_photo'))->toMediaCollection('c_photo', 's3');
-        }
+        $data['room_reservation'] = json_encode($request->input('room_reservation'));  
+        $data['worship_reservation'] = json_encode($request->input('worship_reservation'));  
+        $data['cafeteria_reservation'] = json_encode($request->input('cafeteria_reservation'));  
+  
+       $data = Reservation::create($data);
+
+        //$post = Reservation::create($data);
     
         return response()->json([
             'success' => true,
@@ -71,9 +81,8 @@ class ReservationController extends Controller
     public function show(string $id)
     {
         try {   
-            $data = Calendar::with('location:id')
-            ->findOrFail($id);
-            return new CalendarResource($data);
+            $data = Reservation::findOrFail($id);
+            return new ReservationResource($data);
             
         } catch (ValidationException $e) {
             return response()->json([
@@ -107,66 +116,13 @@ class ReservationController extends Controller
         ], 200);
     }
 
-    public function storeImage(Request $request)
-    {
-        $media = Auth::user()->addMedia($request->file('image'))->toMediaCollection('post_image');
-        return response()->json(['result' => true, 'data' => $media, 'message' => NULL]);
-    }
-
-    public function fileUpdate(Request $request, string $id) {
-        $uploadedMedia = [];
-        $data = Post::where('id', $id)->first();
-        
-        if ($request->status == 'delete') { 
-           $data =  DB::table('media')->where('id', $request->media_id)->delete();
-        }
-
-        if ($request->status == 'add' &&  $request->hasFile('files')) {
-            foreach ($request->file('files') as $file) {
-                 $media = $data->addMedia($file)
-                     ->toMediaCollection('files', 's3'); 
-
-                $uploadedMedia[] = [
-                    'id' => $media->id,
-                    'url' => $media->getUrl(),  
-                    'name' => $media->file_name,
-                    'size' => $media->size,     
-                ];
-            }
-        }
-
-        if ($request->status == 'update' && $request->hasFile('files')) {
-            foreach ($request->file('files') as $file) {
-
-                $media = $data->addMedia($file)
-                     ->toMediaCollection('files', 's3'); 
-
-                $uploadedMedia[] = [
-                    'url' => $media->getUrl(),  
-                    'name' => $media->file_name,
-                    'size' => $media->size,     
-                ];
-
-                
-            }
-            DB::table('media')->where('id', $request->media_id)->delete();
-
-        }
-
-
-        return response()->json([
-            'success' => true,
-            'message' => '수정 완료',
-            'uploaded_media' => $uploadedMedia,
-        ], 200);
-    }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        $post = Calendar::findOrFail($id);
+        $post = Reservation::findOrFail($id);
         $post->forceDelete();
         return response()->json([
             'success' => true,
