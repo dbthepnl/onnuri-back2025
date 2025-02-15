@@ -5,8 +5,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use App\Models\Reservation;
-use App\Http\Resources\ReservationCollection;
+use App\Models\Calendar;
+use App\Http\Resources\CalendarCollection;
 use App\Http\Resources\CalendarResource;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -26,10 +26,40 @@ class ReservationController extends Controller
      */
     public function index(Request $request)
     {
-        $data = QueryBuilder::for(Reservation::class)
-        ->paginate(15);
-
-        return new ReservationCollection($data);
+        $data = QueryBuilder::for(Calendar::class)
+        ->selectRaw('calendars.*, locations.room_name') // selectRaw
+        ->where("board", "reservation") //달력만
+        ->when($request->has('category'), function ($query) use ($request) {
+            $query->where("category", $request->category); // 카테고리명 
+        })
+        ->when($request->has('month') && $request->has('year'), function ($query) use ($request) {
+            $query->whereYear('start', $request->year)
+                  ->whereMonth('start', $request->month);
+        })
+        ->allowedFilters([
+            "title", //제목 검색
+            AllowedFilter::callback('search', function ($query, $value) { //전체 검색
+                $query->where(function ($query) use ($value) {
+                    $query->where('title', 'like', "%$value%");
+                });
+            }),
+        ])
+        ->leftJoin('locations', 'calendars.location_id', '=', 'locations.id') 
+        ->allowedSorts(['id', 'title']);
+        if ($request->pageType == 'grid') {
+            $data = $data->get();
+            $data->map(fn($e) => $e->append(['img']));
+            return response($data);
+        }
+        
+        if ($request->pageType == 'list') {
+            $data = $data
+                ->orderByRaw("CASE WHEN calendars.order = 1 THEN 1 ELSE 2 END")
+                ->orderBy('start', 'desc') 
+                ->paginate(15);
+            $data->map(fn($e) => $e->append(['img']));
+            return new CalendarCollection($data);
+        }
     
     }
 
@@ -39,8 +69,8 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'reservation_type' => 'required|string',
-            'name' => 'nullable',
+            'user_id' => 'required|string',
+            'location_id' => 'nullable',
             'board' => 'required|string',
             'order' => 'nullable',
             'category' => 'nullable',

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 use Spatie\QueryBuilder\QueryBuilder;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Support\Facades\Validator;
@@ -38,26 +38,10 @@ class ReservationController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'reservation_type' => 'required|string',
-            'name' => 'nullable',
-            'board' => 'required|string',
-            'order' => 'nullable',
-            'category' => 'nullable',
-            'public' => 'required|string',
-            'title' => 'nullable|string',
-            'background_color' => 'nullable|string',
-            'border_color' => 'nullable',
-            'start' => 'nullable|string', 
-            'end' => 'nullable|string', 
-            'content' => 'nullable|string'
-        ]);
 
-        $post = Calendar::create($data);
-        
-        if($request->hasFile('calendar_photo')){
-            $post->addMedia($request->file('calendar_photo'))->toMediaCollection('c_photo', 's3');
-        }
+       $data = Reservation::create($request->all());
+
+        //$post = Reservation::create($data);
     
         return response()->json([
             'success' => true,

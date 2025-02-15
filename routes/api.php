@@ -39,6 +39,7 @@ Route::apiResource('calendars', 'App\Http\Controllers\CalendarController');
 Route::apiResource('asks', 'App\Http\Controllers\AskController'); 
 Route::apiResource('categories', 'App\Http\Controllers\CategoryController'); 
 Route::apiResource('trains', 'App\Http\Controllers\TrainController'); 
+Route::apiResource('reservations', 'App\Http\Controllers\ReservationController'); 
 Route::get('homes', [HomeController::class, 'index']);
 Route::get('mains', [MainController::class, 'index']);
 Route::get('calendars', [HomeController::class, 'calendar']);
