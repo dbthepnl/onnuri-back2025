@@ -29,14 +29,6 @@ class MainController extends Controller
     public function index(Request $request)
     {
 
-        $all = QueryBuilder::for(Post::class)
-        ->selectRaw('id, board, title, updated_at')
-        ->whereIn("board", ["qna", "info"]) //QNA: 질문 답변 / INFO: 소식관리
-        ->orderBy('order', 'desc')
-        ->orderBy('updated_at', 'desc')
-        ->limit(4)
-        ->get();
-
         $qna = QueryBuilder::for(Post::class)
         ->selectRaw('id, board, title, updated_at')
         ->where("board", "qna") //QNA: 질문 답변 / INFO: 소식관리
@@ -58,9 +50,8 @@ class MainController extends Controller
         return response()->json([
             'success' => true,
             'message' => '조회, all=전체, qna=질문, info=소식',
-            'all' => $all,
-            'qna' => $qna,
-            'info' => $info
+            'qna' => $qna, //'질문/답변 관리'
+            'info' => $info //공지 관리
         ], 200);
     }
 
