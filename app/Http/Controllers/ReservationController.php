@@ -27,6 +27,7 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
         $data = QueryBuilder::for(Reservation::class)
+        ->selectRaw('id, public, name, CONCAT(SUBSTRING(phone, 1, 7), "****") as phone, created_at')
         ->paginate(15);
 
         return new ReservationCollection($data);
@@ -78,12 +79,15 @@ class ReservationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
         try {   
-            $data = Calendar::with('location:id')
-            ->findOrFail($id);
-            return new CalendarResource($data);
+            $data = Reservation::where('password', $request->password)
+            ->first();
+            if($data) {
+                return response()->json(['success' => true, 'message' => '성공', 'data' => $data]);
+            }
+            return response()->json(['success' => false, 'message' => '실패', 'data' => NULL]);
             
         } catch (ValidationException $e) {
             return response()->json([
