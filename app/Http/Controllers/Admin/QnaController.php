@@ -28,7 +28,7 @@ class QnaController extends Controller
     public function index(Request $request)
     {
         $users = QueryBuilder::for(Post::class)
-        ->selectRaw('id, board, title, content, created_at, updated_at')
+        ->selectRaw('id, public, board, title, content, created_at, updated_at')
         ->where("board", $request->board) //훈련관리:train / 공지관리:notice
         ->when($request->has('category'), function ($query) use ($request) {
             $query->where("category", $request->category); // 기본값 1: 공지사항

@@ -30,30 +30,90 @@ class ReservationController extends Controller
 
         //객실 예약
         if($request->room_reservation && $request->pageType == "grid") {
-            $data = $data->where('id, reservation_type, name, phone, email, room_worship_type, created_at')->get();
-            $data->transform(function ($item) {
-                $item->room_reservation = json_decode($item->room_reservation, true);
-                return $item;
+            $data = $data->selectRaw('id, reservation_type, name, phone, email, room_worship_type, room_reservation, created_at')
+            ->whereYear('created_at', $request->year)
+            ->whereMonth('created_at', $request->month)
+            ->get();
+
+            $data->transform(function ($item) use ($request) {
+                $roomReservations = json_decode($item->room_reservation, true);
+            
+                $year = $request->year;
+                $month = $request->month;
+            
+                $filteredReservations = collect($roomReservations)->filter(function ($reservation) use ($year, $month) {
+                    return isset($reservation['start_date']) && 
+                           \Carbon\Carbon::parse($reservation['start_date'])->year == $year && 
+                           \Carbon\Carbon::parse($reservation['start_date'])->month == $month;
+                });
+            
+                if ($filteredReservations->isNotEmpty()) {
+                    $item->room_reservation = $filteredReservations;
+                    return $item;
+                }
+                return null;
+            })->filter(function ($item) {
+                return $item !== null;
             });
-        
+    
         }
 
         //예배 예약
         if($request->worship_reservation && $request->pageType == "grid") {
-            $data = $data->get();
-            $data->transform(function ($item) {
-                $item->room_reservation = json_decode($item->worship_reservation, true);
-                return $item;
+            $data = $data->selectRaw('id, reservation_type, name, phone, email, room_worship_type, worship_reservation, created_at')
+            ->whereYear('created_at', $request->year)
+            ->whereMonth('created_at', $request->month)
+            ->get();
+
+            $data->transform(function ($item) use ($request) {
+                $roomReservations = json_decode($item->room_reservation, true);
+            
+                $year = $request->year;
+                $month = $request->month;
+            
+                $filteredReservations = collect($roomReservations)->filter(function ($reservation) use ($year, $month) {
+                    return isset($reservation['start_date']) && 
+                           \Carbon\Carbon::parse($reservation['start_date'])->year == $year && 
+                           \Carbon\Carbon::parse($reservation['start_date'])->month == $month;
+                });
+            
+                if ($filteredReservations->isNotEmpty()) {
+                    $item->room_reservation = $filteredReservations;
+                    return $item;
+                }
+                return null;
+            })->filter(function ($item) {
+                return $item !== null;
             });
 
         }
 
         //식사 예약
         if($request->cafeteria_reservation && $request->pageType == "grid") {
-            $data = $data->get();
-            $data->transform(function ($item) {
-                $item->room_reservation = json_decode($item->cafeteria_reservation, true);
-                return $item;
+            $data = $data->selectRaw('id, reservation_type, name, phone, email, room_worship_type, cafeteria_reservation, created_at')
+            ->whereYear('created_at', $request->year)
+            ->whereMonth('created_at', $request->month)
+            ->get();
+
+            $data->transform(function ($item) use ($request) {
+                $roomReservations = json_decode($item->room_reservation, true);
+            
+                $year = $request->year;
+                $month = $request->month;
+            
+                $filteredReservations = collect($roomReservations)->filter(function ($reservation) use ($year, $month) {
+                    return isset($reservation['start_date']) && 
+                           \Carbon\Carbon::parse($reservation['start_date'])->year == $year && 
+                           \Carbon\Carbon::parse($reservation['start_date'])->month == $month;
+                });
+            
+                if ($filteredReservations->isNotEmpty()) {
+                    $item->room_reservation = $filteredReservations;
+                    return $item;
+                }
+                return null;
+            })->filter(function ($item) {
+                return $item !== null;
             });
         }
 
