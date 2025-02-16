@@ -118,7 +118,24 @@ class ReservationController extends Controller
         }
 
         if($request->pageType == 'list') {
-            $data = $data->selectRaw('id, reservation_type, name, phone, email, room_worship_type, created_at')->orderBy('updated_at', 'asc')->paginate(15);
+            $data = $data->selectRaw('
+                id,
+                reservation_type,
+                name,
+                phone,
+                email,
+                room_worship_type,
+                CASE WHEN room_reservation IS NOT NULL AND room_reservation != "" THEN 1 ELSE 0 END AS room_reservation,
+                CASE WHEN worship_reservation IS NOT NULL AND worship_reservation != "" THEN 1 ELSE 0 END AS worship_reservation,
+                CASE WHEN cafeteria_reservation IS NOT NULL AND cafeteria_reservation != "" THEN 1 ELSE 0 END AS cafeteria_reservation,
+                created_at
+            ')
+            ->when(request()->has('reservation_type') && request('reservation_type') !== null, function($query) {
+                return $query->where('reservation_type', request('reservation_type'));
+            })
+            ->orderBy('updated_at', 'asc')
+            ->paginate(15);
+
         }
 
 
