@@ -30,7 +30,7 @@ class ReservationController extends Controller
 
         //객실 예약
         if($request->room_reservation == 1 && $request->pageType == "grid") {
-            $data = $data->selectRaw('id, reservation_type, name, phone, email, room_worship_type, room_reservation, created_at')
+            $data = $data->selectRaw('id, public, reservation_type, name, phone, email, room_worship_type, room_reservation, created_at')
             ->whereYear('created_at', $request->year)
             ->whereMonth('created_at', $request->month)
             ->get();
@@ -60,7 +60,7 @@ class ReservationController extends Controller
 
         //예배 예약
         if($request->room_reservation == 2 && $request->pageType == "grid") {
-            $data = $data->selectRaw('id, reservation_type, name, phone, email, room_worship_type, worship_reservation AS room_reservation, created_at')
+            $data = $data->selectRaw('id, public, reservation_type, name, phone, email, room_worship_type, worship_reservation AS room_reservation, created_at')
             ->whereYear('created_at', $request->year)
             ->whereMonth('created_at', $request->month)
             ->get();
@@ -90,7 +90,7 @@ class ReservationController extends Controller
 
         //식사 예약
         if($request->room_reservation == 3 && $request->pageType == "grid") {
-            $data = $data->selectRaw('id, reservation_type, name, phone, email, room_worship_type, cafeteria_reservation AS room_reservation, created_at')
+            $data = $data->selectRaw('id, public, reservation_type, name, phone, email, room_worship_type, cafeteria_reservation AS room_reservation, created_at')
             ->whereYear('created_at', $request->year)
             ->whereMonth('created_at', $request->month)
             ->get();
@@ -120,6 +120,7 @@ class ReservationController extends Controller
         if($request->pageType == 'list') {
             $data = $data->selectRaw('
                 id,
+                public,
                 reservation_type,
                 name,
                 phone,
