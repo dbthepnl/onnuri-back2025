@@ -63,6 +63,7 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::post('users/profile/{id}', [UserController::class, 'profile']);
     Route::post('notices/profile/{id}', [NoticeController::class, 'profile']);
     Route::post('notices/files/{id}', [NoticeController::class, 'fileUpdate']);
+    Route::post('infos/files/{id}', [NoticeController::class, 'fileUpdate']);
     Route::post('trains/profile/{id}', [NoticeController::class, 'profile']);
     Route::post('trains/files/{id}', [NoticeController::class, 'fileUpdate']);
     Route::post('store/image', [NoticeController::class, 'storeImage']);

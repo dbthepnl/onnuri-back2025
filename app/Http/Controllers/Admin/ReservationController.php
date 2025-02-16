@@ -26,8 +26,42 @@ class ReservationController extends Controller
      */
     public function index(Request $request)
     {
-        $data = QueryBuilder::for(Reservation::class)
-        ->paginate(15);
+        $data = QueryBuilder::for(Reservation::class);
+
+        //객실 예약
+        if($request->room_reservation && $request->pageType == "grid") {
+            $data = $data->where('id, reservation_type, name, phone, email, room_worship_type, created_at')->get();
+            $data->transform(function ($item) {
+                $item->room_reservation = json_decode($item->room_reservation, true);
+                return $item;
+            });
+        
+        }
+
+        //예배 예약
+        if($request->worship_reservation && $request->pageType == "grid") {
+            $data = $data->get();
+            $data->transform(function ($item) {
+                $item->room_reservation = json_decode($item->worship_reservation, true);
+                return $item;
+            });
+
+        }
+
+        //식사 예약
+        if($request->cafeteria_reservation && $request->pageType == "grid") {
+            $data = $data->get();
+            $data->transform(function ($item) {
+                $item->room_reservation = json_decode($item->cafeteria_reservation, true);
+                return $item;
+            });
+        }
+
+        if($request->pageType == 'list') {
+            $data = $data->paginate(15);
+        }
+
+
 
         return new ReservationCollection($data);
     
