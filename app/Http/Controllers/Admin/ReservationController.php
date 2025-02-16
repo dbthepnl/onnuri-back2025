@@ -118,7 +118,7 @@ class ReservationController extends Controller
         }
 
         if($request->pageType == 'list') {
-            $data = $data->paginate(15);
+            $data = $data->selectRaw('id, reservation_type, name, phone, email, room_worship_type, created_at')->orderBy('updated_at', 'asc')->paginate(15);
         }
 
 
