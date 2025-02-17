@@ -180,11 +180,13 @@ class ReservationController extends Controller
      */
     public function destroy(string $id)
     {
-        $post = Calendar::findOrFail($id);
-        $post->forceDelete();
+        $post = Reservation::findOrFail($id);
+        $post->update([
+            'public' => 0
+        ]);
         return response()->json([
             'success' => true,
-            'message' => '삭제 완료'
+            'message' => '취소 완료'
         ], 200);
     }
 }
