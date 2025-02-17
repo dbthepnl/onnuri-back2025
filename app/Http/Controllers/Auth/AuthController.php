@@ -14,6 +14,8 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -167,6 +169,9 @@ class AuthController extends Controller
 
         session()->regenerate();
         $token = $user->createToken('auth_token')->plainTextToken;
+        if(Auth::user()->role != 0){
+            $permission = DB::table('role_has_permissions')->where('role_id', Auth::user()->role)->get();
+        }
         $parts = explode('|', $token);
         $token = $parts[1];
 
@@ -174,6 +179,7 @@ class AuthController extends Controller
             'success' => true,
             'message' => '로그인완료',
             'token' => $token,
+            'permission' => $permission ?? NULL,
             'user' => Auth::user()
         ], 200);
 
