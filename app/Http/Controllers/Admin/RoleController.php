@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\Cache;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class RoleController extends Controller
@@ -14,16 +17,34 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        return 'index';
+        $data = Role::selectRaw('roles.id, roles.name, count(users.id) AS user_count, roles.created_at')->leftJoin('users', 'users.role', '=', 'roles.id')->groupBy('roles.id', 'roles.name', 'roles.created_at')->get();
+        return response()->json($data);
     }
 
     /**
      * Store a newly created resource in storage.
      */
+
+     //회원 등급 생성
     public function store(Request $request)
     {
-        $role = Role::create(['name' => 'writer']);
-        $permission = Permission::create(['name' => 'edit articles']);
+        if($request->name) {
+            $data = Role::where('name', $request->name)->first();
+            if(!$data) {
+                $role = Role::create(['name' => $request->name ],['guard_name' => 'web'] );
+                return response()->json(['success' => true, 'message' => '성공']);
+            }
+        }
+
+        return response()->json(['success' => false, 'message' => '실패, 존재하는 데이터이거나 오류']);
+       // $permission = Permission::create(['name' => 'edit articles']);
+    }
+
+    //
+    public function userAssignRole(Request $request)
+    {
+        $data = Role::get();
+        return response()->json(['result' => true, 'data' => $data, 'message' => '조회 완료']);
     }
 
     /**
@@ -31,7 +52,8 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        return 'show';
+       $data = Role::findOrFail($id);
+       return response()->json(['success' => true, 'data' => $data]);
     }
 
     /**
@@ -39,7 +61,16 @@ class RoleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        return 'update';
+        if($request->name) {
+            $data = Role::where('name', $request->name)->first();
+            if(!$data) {
+                $role = Role::create(['name' => $request->name ]);
+                return response()->json(['success' => true, 'message' => '수정완료']);
+            }
+        }
+
+        return response()->json(['result' => false, 'message' => '이름 이미 존재']);
+       // $permission = Permission::create(['name' => 'edit articles']);
     }
 
     /**
@@ -47,6 +78,11 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        return 'destroy';
+        $post = Role::findOrFail($id);
+        $post->forceDelete();
+        return response()->json([
+            'success' => true,
+            'message' => '삭제 완료'
+        ], 200);
     }
 }

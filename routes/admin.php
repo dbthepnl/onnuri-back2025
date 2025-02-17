@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\BoardController;
 use App\Http\Controllers\Admin\CalendarController;
 use App\Http\Controllers\Admin\ReservationController;
 use App\Http\Controllers\Admin\BusController;
+use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\CardinalController;
 use App\Http\Controllers\Admin\DonationController;
 use Illuminate\Support\Facades\Route;
@@ -32,12 +33,15 @@ Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'admin'], function (
     Route::get('gongzimes', [NoticeController::class, 'indexGongzimes']);
     Route::get('form_elements', [FormController::class, 'indexElement']);
 
+    //권한
+    Route::get('user-assign-role', [RoleController::class, 'userAssignRole']); 
+
     //신청자 관리
-    
     Route::get('register-list', [FormController::class, 'registerIndex']);
     Route::get('register-show/{id}', [FormController::class, 'registerShow']);
     Route::apiResource('form_options', FormOptionController::class);
     Route::apiResource('boards', BoardController::class);
+    Route::apiResource('permissions', PermissionController::class);
     Route::apiResource('posts', PostController::class);
     Route::apiResource('infos', InfoController::class);
     Route::apiResource('qnas', QnaController::class);
