@@ -28,6 +28,7 @@ class ReservationController extends Controller
     {
         $data = QueryBuilder::for(Reservation::class)
         ->selectRaw('id, public, name, CONCAT(SUBSTRING(phone, 1, 7), "****") as phone, created_at')
+        ->orderBy('updated_at', 'desc')
         ->paginate(15);
 
         return new ReservationCollection($data);
