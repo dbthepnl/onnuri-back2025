@@ -41,7 +41,7 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'public' => 'nullable|boolean',
+            'public' => 'nullable',
             'reservation_type' => 'nullable|boolean',
             'name' => 'string',
             'home_phone' => 'string',
@@ -63,9 +63,18 @@ class ReservationController extends Controller
             'cafeteria_reservation' => 'nullable'
         ]);
 
-        $data['room_reservation'] = json_encode($request->input('room_reservation'));  
-        $data['worship_reservation'] = json_encode($request->input('worship_reservation'));  
-        $data['cafeteria_reservation'] = json_encode($request->input('cafeteria_reservation'));  
+        if($request->input('room_reservation')) {
+            $data['room_reservation'] = json_encode($request->input('room_reservation'));  
+        } 
+
+        if($request->input('worship_reservation')) {
+            $data['worship_reservation'] = json_encode($request->input('worship_reservation'));         
+        }
+
+        if($request->input('cafeteria_reservation')) {
+            $data['worship_reservation'] = json_encode($request->input('worship_reservation'));         
+        }
+
   
        $data = Reservation::create($data);
 
