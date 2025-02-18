@@ -72,7 +72,7 @@ class ReservationController extends Controller
         }
 
         if($request->input('cafeteria_reservation')) {
-            $data['worship_reservation'] = json_encode($request->input('worship_reservation'));         
+            $data['cafeteria_reservation'] = json_encode($request->input('cafeteria_reservation'));         
         }
 
   
